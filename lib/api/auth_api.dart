@@ -27,7 +27,8 @@ class AuthApi {
     return null;
   }
 
-  Future<User?> register(String fullname, String email, String password) async {
+  Future<Map<String, dynamic>?> register(
+      String fullname, String email, String password) async {
     final response = await http.post(
       Uri.parse('$_baseUrl/register'),
       headers: <String, String>{
@@ -40,11 +41,10 @@ class AuthApi {
       }),
     );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      if (data['error'] == false) {
-        return User.fromJson(data['registerResult']);
-      }
+    if (response.statusCode == 201) {
+      return jsonDecode(response.body);
+    } else if (response.statusCode == 400 || response.statusCode == 500) {
+      return jsonDecode(response.body);
     }
     return null;
   }

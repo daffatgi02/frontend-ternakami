@@ -1,4 +1,6 @@
 //register_screen.dart
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:ternakami/screens/login_screen.dart';
 import '../api/auth_api.dart';
@@ -58,6 +60,15 @@ class RegisterScreen extends StatelessWidget {
     );
   }
 
+  bool _isEmailValid(String email) {
+    final emailRegex = RegExp(r'^\S+@\S+\.\S+$');
+    return emailRegex.hasMatch(email);
+  }
+
+  bool _isPasswordValid(String password) {
+    return password.length >= 6;
+  }
+
   void _handleRegister(BuildContext context) async {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
     final fullname = fullnameController.text.trim();
@@ -74,19 +85,62 @@ class RegisterScreen extends StatelessWidget {
       return;
     }
 
+    if (!_isEmailValid(email)) {
+      scaffoldMessenger.showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid email address'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    if (!_isPasswordValid(password)) {
+      scaffoldMessenger.showSnackBar(
+        const SnackBar(
+          content: Text('Password must be at least 6 characters long'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     try {
-      final user = await authApi.register(fullname, email, password);
-      if (user != null) {
-        // Handle pendaftaran berhasil dan navigasi ke halaman lain jika diperlukan
+      final response = await authApi.register(fullname, email, password);
+      if (response != null) {
+        if (response['error'] == false) {
+          // Registration successful
+          scaffoldMessenger.showSnackBar(
+            SnackBar(
+              content: Text(response['message']),
+              backgroundColor: Colors.green,
+            ),
+          );
+          // Navigate to login screen after successful registration
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+          );
+        } else {
+          // Registration failed with a known error (e.g., validation error, email already taken)
+          scaffoldMessenger.showSnackBar(
+            SnackBar(
+              content: Text(response['message']),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       } else {
+        // An unexpected null response, potentially a network issue or server error
         scaffoldMessenger.showSnackBar(
           const SnackBar(
-            content: Text('Registration Failed'),
+            content: Text('Unexpected error occurred'),
             backgroundColor: Colors.red,
           ),
         );
       }
     } catch (e) {
+      // Catch any other exceptions that might occur
       scaffoldMessenger.showSnackBar(
         SnackBar(
           content: Text('An error occurred: ${e.toString()}'),
