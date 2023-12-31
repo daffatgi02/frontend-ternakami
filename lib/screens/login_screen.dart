@@ -1,8 +1,8 @@
-// ignore_for_file: use_build_context_synchronously
-
+//login_screen.dart
 import 'package:flutter/material.dart';
 import '../api/auth_api.dart';
 import 'homepage_screen.dart';
+import './register_screen.dart';
 
 class LoginScreen extends StatelessWidget {
   final AuthApi authApi = AuthApi();
@@ -42,7 +42,12 @@ class LoginScreen extends StatelessWidget {
             ),
             const SizedBox(height: 12), // Space before the text button
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RegisterScreen()),
+                );
+              },
               child: const Text('Don\'t have an account? Register'),
             ),
           ],
