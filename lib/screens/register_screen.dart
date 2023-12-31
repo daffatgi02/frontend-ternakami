@@ -1,3 +1,4 @@
+//register_screen.dart
 import 'package:flutter/material.dart';
 import 'package:ternakami/screens/login_screen.dart';
 import '../api/auth_api.dart';
@@ -93,5 +94,6 @@ class RegisterScreen extends StatelessWidget {
         ),
       );
     }
+    return;
   }
 }
