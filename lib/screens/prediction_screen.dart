@@ -6,8 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:ternakami/services/api_service.dart';
 import 'package:flutter/services.dart';
 import 'package:crop/crop.dart';
-import 'package:flutter/services.dart'; // Tambahkan ini untuk mendapatkan akses ke ui.ImageByteFormat
-import 'package:path_provider/path_provider.dart'; // Tambahkan ini untuk akses direktori sementara
+import 'package:path_provider/path_provider.dart';
 import 'hasilprediksi_screen.dart';
 
 class PredictionScreen extends StatefulWidget {
@@ -32,7 +31,6 @@ class _PredictionScreenState extends State<PredictionScreen> {
   final ApiService _apiService = ApiService();
 
   final CropController _cropController = CropController();
-  double _rotation = 0;
   BoxShape _shape = BoxShape.rectangle;
 
   @override
