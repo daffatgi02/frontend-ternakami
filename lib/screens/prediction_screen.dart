@@ -303,7 +303,7 @@ class _PredictionScreenState extends State<PredictionScreen> {
                   onPressed: _toggleFlash,
                 ),
                 IconButton(
-                  icon: const Icon(Icons.switch_camera, color: Colors.white),
+                  icon: const Icon(Icons.cameraswitch, color: Colors.white),
                   onPressed: _flipCamera,
                 ),
                 IconButton(
@@ -318,7 +318,7 @@ class _PredictionScreenState extends State<PredictionScreen> {
           Center(
             child: Container(
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.white, width: 2),
+                border: Border.all(color: Colors.blue, width: 2),
               ),
               width: 200,
               height: 200,
@@ -335,8 +335,8 @@ class _PredictionScreenState extends State<PredictionScreen> {
                     onTap: _captureImage,
                     child: const CircleAvatar(
                       radius: 30,
-                      backgroundColor: Colors.white,
-                      child: Icon(Icons.camera_alt, color: Colors.black),
+                      backgroundColor: Colors.blue,
+                      child: Icon(Icons.camera_alt, color: Colors.white),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -345,17 +345,24 @@ class _PredictionScreenState extends State<PredictionScreen> {
                     style: TextStyle(color: Colors.white),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 90),
                   ElevatedButton(
                     onPressed: _selectImageFromGallery,
                     style: ElevatedButton.styleFrom(
-                      foregroundColor: Colors.black,
-                      backgroundColor: Colors.white,
+                      foregroundColor: Colors.white,
+                      backgroundColor: Colors.blue,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                        borderRadius: BorderRadius.circular(13),
                       ),
                     ),
-                    child: const Text('Upload Gambar'),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.drive_folder_upload_rounded),
+                        SizedBox(width: 5), // spacing between icon and text
+                        Text('Upload'),
+                      ],
+                    ),
                   ),
                 ],
               ),
