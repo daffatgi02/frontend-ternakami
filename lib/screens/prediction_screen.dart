@@ -31,7 +31,7 @@ class _PredictionScreenState extends State<PredictionScreen> {
   final ApiService _apiService = ApiService();
 
   final CropController _cropController = CropController();
-  BoxShape _shape = BoxShape.rectangle;
+  final BoxShape _shape = BoxShape.rectangle;
 
   @override
   void initState() {
@@ -71,8 +71,10 @@ class _PredictionScreenState extends State<PredictionScreen> {
       final XFile image = await _cameraController!.takePicture();
       setState(() {
         _image = image;
-        _showImagePreview();
       });
+      if (_image != null) {
+        _showImagePreview();
+      }
     }
   }
 
@@ -81,8 +83,10 @@ class _PredictionScreenState extends State<PredictionScreen> {
         await _picker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image = pickedFile;
-      _showImagePreview();
     });
+    if (_image != null) {
+      _showImagePreview();
+    }
   }
 
   void _showImagePreview() {
@@ -146,7 +150,6 @@ class _PredictionScreenState extends State<PredictionScreen> {
                       ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
-                          _captureImage();
                         },
                         child: const Text('Retake Photo'),
                       ),
