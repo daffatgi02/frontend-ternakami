@@ -146,7 +146,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                       child: const Text(
                         'Daftar',
-                        style: TextStyle(fontSize: 18),
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white, // Menambahkan warna putih
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),

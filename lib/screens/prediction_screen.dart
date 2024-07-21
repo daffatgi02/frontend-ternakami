@@ -1,9 +1,13 @@
+import 'dart:ui' as ui;
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ternakami/services/api_service.dart';
 import 'package:flutter/services.dart';
+import 'package:crop/crop.dart';
+import 'package:flutter/services.dart'; // Tambahkan ini untuk mendapatkan akses ke ui.ImageByteFormat
+import 'package:path_provider/path_provider.dart'; // Tambahkan ini untuk akses direktori sementara
 import 'hasilprediksi_screen.dart';
 
 class PredictionScreen extends StatefulWidget {
@@ -26,6 +30,10 @@ class _PredictionScreenState extends State<PredictionScreen> {
   final List<String> _types = ['sapi', 'kambing'];
   final TextEditingController _animalNameController = TextEditingController();
   final ApiService _apiService = ApiService();
+
+  final CropController _cropController = CropController();
+  double _rotation = 0;
+  BoxShape _shape = BoxShape.rectangle;
 
   @override
   void initState() {
@@ -83,66 +91,142 @@ class _PredictionScreenState extends State<PredictionScreen> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _image != null
-                  ? Image.file(File(_image!.path), height: 200)
-                  : const SizedBox(
-                      height: 200,
-                      child: Center(child: Text('No Image Selected')),
-                    ),
-              const SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                value: _selectedType,
-                onChanged: (newValue) {
-                  setState(() {
-                    _selectedType = newValue;
-                  });
-                },
-                items: _types.map((type) {
-                  return DropdownMenuItem<String>(
-                    value: type,
-                    child: Text(type),
-                  );
-                }).toList(),
-                decoration: const InputDecoration(labelText: 'Type'),
-              ),
-              const SizedBox(height: 20),
-              TextField(
-                controller: _animalNameController,
-                decoration: const InputDecoration(labelText: 'Animal Name'),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(
-                      r'[a-zA-Z0-9\s]')), // Allow letters, numbers, and spaces only
-                ],
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      _captureImage();
+                  _image != null
+                      ? Image.file(File(_image!.path), height: 200)
+                      : const SizedBox(
+                          height: 200,
+                          child: Center(child: Text('No Image Selected')),
+                        ),
+                  const SizedBox(height: 20),
+                  _image != null
+                      ? ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            _showCropScreen();
+                          },
+                          child: const Text('Crop Image'),
+                        )
+                      : Container(),
+                  const SizedBox(height: 20),
+                  DropdownButtonFormField<String>(
+                    value: _selectedType,
+                    onChanged: (newValue) {
+                      setState(() {
+                        _selectedType = newValue;
+                      });
                     },
-                    child: const Text('Retake Photo'),
+                    items: _types.map((type) {
+                      return DropdownMenuItem<String>(
+                        value: type,
+                        child: Text(type),
+                      );
+                    }).toList(),
+                    decoration: const InputDecoration(labelText: 'Type'),
                   ),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                      _predict();
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _animalNameController,
+                    decoration: const InputDecoration(labelText: 'Animal Name'),
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r'[a-zA-Z0-9\s]')),
+                    ],
+                    onChanged: (text) {
+                      setState(() {});
                     },
-                    child: const Text('Continue'),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          _captureImage();
+                        },
+                        child: const Text('Retake Photo'),
+                      ),
+                      ElevatedButton(
+                        onPressed: _selectedType != null &&
+                                _animalNameController.text.isNotEmpty
+                            ? () {
+                                Navigator.of(context).pop();
+                                _predict();
+                              }
+                            : null,
+                        child: const Text('Continue'),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
-          ),
+            );
+          },
         );
       },
     );
+  }
+
+  void _showCropScreen() {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => Scaffold(
+          appBar: AppBar(
+            title: const Text('Crop Image'),
+            centerTitle: true,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.check),
+                onPressed: _cropImage,
+              ),
+            ],
+          ),
+          body: Crop(
+            controller: _cropController,
+            shape: _shape,
+            foreground: IgnorePointer(
+              child: Container(
+                alignment: Alignment.bottomRight,
+              ),
+            ),
+            child: Image.file(File(_image!.path), fit: BoxFit.cover),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _cropImage() async {
+    final pixelRatio = MediaQuery.of(context).devicePixelRatio;
+    final cropped = await _cropController.crop(pixelRatio: pixelRatio);
+
+    if (cropped != null) {
+      final byteData = await cropped.toByteData(format: ui.ImageByteFormat.png);
+      if (byteData != null) {
+        final buffer = byteData.buffer.asUint8List();
+
+        // Dapatkan direktori sementara
+        final tempDir = await getTemporaryDirectory();
+        final filePath = '${tempDir.path}/cropped_image.png';
+
+        // Simpan gambar hasil pemotongan ke file sementara
+        final file = File(filePath);
+        await file.writeAsBytes(buffer);
+
+        setState(() {
+          _image = XFile(filePath);
+        });
+
+        Navigator.of(context).pop();
+        _showImagePreview();
+      }
+    }
   }
 
   Future<void> _predict() async {
@@ -192,14 +276,14 @@ class _PredictionScreenState extends State<PredictionScreen> {
           Positioned.fill(
             child: _cameraController == null ||
                     !_cameraController!.value.isInitialized
-                ? Center(child: CircularProgressIndicator())
+                ? const Center(child: CircularProgressIndicator())
                 : CameraPreview(_cameraController!),
           ),
           Positioned(
             top: 40,
             left: 10,
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
+              icon: const Icon(Icons.arrow_back, color: Colors.white),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -218,11 +302,11 @@ class _PredictionScreenState extends State<PredictionScreen> {
                   onPressed: _toggleFlash,
                 ),
                 IconButton(
-                  icon: Icon(Icons.switch_camera, color: Colors.white),
+                  icon: const Icon(Icons.switch_camera, color: Colors.white),
                   onPressed: _flipCamera,
                 ),
                 IconButton(
-                  icon: Icon(Icons.more_vert, color: Colors.white),
+                  icon: const Icon(Icons.more_vert, color: Colors.white),
                   onPressed: () {
                     // Add more options functionality here
                   },
@@ -248,14 +332,14 @@ class _PredictionScreenState extends State<PredictionScreen> {
                 children: [
                   GestureDetector(
                     onTap: _captureImage,
-                    child: CircleAvatar(
+                    child: const CircleAvatar(
                       radius: 30,
                       backgroundColor: Colors.white,
                       child: Icon(Icons.camera_alt, color: Colors.black),
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Text(
+                  const Text(
                     'Sesuaikan posisi mata kambing agar memenuhi Frame',
                     style: TextStyle(color: Colors.white),
                     textAlign: TextAlign.center,
@@ -263,14 +347,14 @@ class _PredictionScreenState extends State<PredictionScreen> {
                   const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: _selectImageFromGallery,
-                    child: const Text('Upload Gambar'),
                     style: ElevatedButton.styleFrom(
-                      primary: Colors.white,
-                      onPrimary: Colors.black,
+                      foregroundColor: Colors.black,
+                      backgroundColor: Colors.white,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
+                    child: const Text('Upload Gambar'),
                   ),
                 ],
               ),
