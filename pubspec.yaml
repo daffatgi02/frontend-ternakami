@@ -29,3 +29,6 @@ flutter:
   assets:
     - assets\gambar\login_image.png
     - assets\gambar\regis.png
+    - assets\gambar\onboarding2.png
+    - assets\gambar\onboarding1.png
+    - assets\gambar\onboarding3.png
