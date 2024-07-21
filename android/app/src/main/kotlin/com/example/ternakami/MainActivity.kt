@@ -1,4 +1,4 @@
-package com.example.ternakami
+package com.ternakami.app
 
 import io.flutter.embedding.android.FlutterActivity
 

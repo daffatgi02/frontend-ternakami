@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:camera/camera.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:ternakami/services/api_service.dart'; // Importing ApiService
+import 'package:ternakami/services/api_service.dart';
+import 'package:flutter/services.dart';
+import 'hasilprediksi_screen.dart';
 
 class PredictionScreen extends StatefulWidget {
   final String token;
@@ -13,28 +16,136 @@ class PredictionScreen extends StatefulWidget {
 }
 
 class _PredictionScreenState extends State<PredictionScreen> {
-  File? _image;
+  CameraController? _cameraController;
+  List<CameraDescription>? _cameras;
+  bool _isRearCameraSelected = true;
+  bool _flashEnabled = false;
+  XFile? _image;
   final ImagePicker _picker = ImagePicker();
   String? _selectedType;
   final List<String> _types = ['sapi', 'kambing'];
   final TextEditingController _animalNameController = TextEditingController();
-  final ApiService _apiService =
-      ApiService(); // Creating instance of ApiService
+  final ApiService _apiService = ApiService();
 
-  Future getImage() async {
+  @override
+  void initState() {
+    super.initState();
+    _initializeCamera();
+  }
+
+  Future<void> _initializeCamera() async {
+    _cameras = await availableCameras();
+    _cameraController = CameraController(
+      _isRearCameraSelected ? _cameras!.first : _cameras!.last,
+      ResolutionPreset.high,
+    );
+    await _cameraController!.initialize();
+    if (mounted) {
+      setState(() {});
+    }
+  }
+
+  Future<void> _toggleFlash() async {
+    if (_cameraController != null && _cameraController!.value.isInitialized) {
+      _flashEnabled = !_flashEnabled;
+      await _cameraController!.setFlashMode(
+        _flashEnabled ? FlashMode.torch : FlashMode.off,
+      );
+      setState(() {});
+    }
+  }
+
+  Future<void> _flipCamera() async {
+    _isRearCameraSelected = !_isRearCameraSelected;
+    await _initializeCamera();
+  }
+
+  Future<void> _captureImage() async {
+    if (_cameraController != null && _cameraController!.value.isInitialized) {
+      final XFile image = await _cameraController!.takePicture();
+      setState(() {
+        _image = image;
+        _showImagePreview();
+      });
+    }
+  }
+
+  Future<void> _selectImageFromGallery() async {
     final XFile? pickedFile =
         await _picker.pickImage(source: ImageSource.gallery);
-
     setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      } else {
-        print('No image selected.');
-      }
+      _image = pickedFile;
+      _showImagePreview();
     });
   }
 
-  Future<void> predict() async {
+  void _showImagePreview() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _image != null
+                  ? Image.file(File(_image!.path), height: 200)
+                  : const SizedBox(
+                      height: 200,
+                      child: Center(child: Text('No Image Selected')),
+                    ),
+              const SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                value: _selectedType,
+                onChanged: (newValue) {
+                  setState(() {
+                    _selectedType = newValue;
+                  });
+                },
+                items: _types.map((type) {
+                  return DropdownMenuItem<String>(
+                    value: type,
+                    child: Text(type),
+                  );
+                }).toList(),
+                decoration: const InputDecoration(labelText: 'Type'),
+              ),
+              const SizedBox(height: 20),
+              TextField(
+                controller: _animalNameController,
+                decoration: const InputDecoration(labelText: 'Animal Name'),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(
+                      r'[a-zA-Z0-9\s]')), // Allow letters, numbers, and spaces only
+                ],
+              ),
+              const SizedBox(height: 20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _captureImage();
+                    },
+                    child: const Text('Retake Photo'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _predict();
+                    },
+                    child: const Text('Continue'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _predict() async {
     if (_image == null ||
         _selectedType == null ||
         _animalNameController.text.isEmpty) {
@@ -44,10 +155,9 @@ class _PredictionScreenState extends State<PredictionScreen> {
       return;
     }
 
-    final bytes = await _image!.readAsBytes();
     final Map<String, dynamic>? predictionResult = await _apiService.predict(
       widget.token,
-      _image!,
+      File(_image!.path),
       _selectedType!,
       _animalNameController.text,
     );
@@ -69,93 +179,104 @@ class _PredictionScreenState extends State<PredictionScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Animal Eye Prediction')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            ElevatedButton(
-              onPressed: getImage,
-              child: const Text('Select Image'),
-            ),
-            const SizedBox(height: 20),
-            _image != null
-                ? Image.file(_image!, height: 200)
-                : const SizedBox(
-                    height: 200,
-                    child: Center(child: Text('No Image Selected')),
-                  ),
-            const SizedBox(height: 20),
-            DropdownButtonFormField<String>(
-              value: _selectedType,
-              onChanged: (newValue) {
-                setState(() {
-                  _selectedType = newValue;
-                });
-              },
-              items: _types.map((type) {
-                return DropdownMenuItem<String>(
-                  value: type,
-                  child: Text(type),
-                );
-              }).toList(),
-              decoration: const InputDecoration(labelText: 'Type'),
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              controller: _animalNameController,
-              decoration: const InputDecoration(labelText: 'Animal Name'),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: predict,
-              child: const Text('Predict'),
-            ),
-          ],
-        ),
-      ),
-    );
+  void dispose() {
+    _cameraController?.dispose();
+    super.dispose();
   }
-}
-
-class HasilPrediksiScreen extends StatelessWidget {
-  final Map<String, dynamic> predictionResult;
-
-  const HasilPrediksiScreen({Key? key, required this.predictionResult})
-      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Prediction Result')),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Hasil Prediksi',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: _cameraController == null ||
+                    !_cameraController!.value.isInitialized
+                ? Center(child: CircularProgressIndicator())
+                : CameraPreview(_cameraController!),
+          ),
+          Positioned(
+            top: 40,
+            left: 10,
+            child: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
-            SizedBox(height: 10),
-            Text(
-              predictionResult['label_prediksi'] ?? 'Unknown',
-              style: TextStyle(fontSize: 18),
+          ),
+          Positioned(
+            top: 40,
+            right: 10,
+            child: Row(
+              children: [
+                IconButton(
+                  icon: Icon(
+                    _flashEnabled ? Icons.flash_on : Icons.flash_off,
+                    color: Colors.white,
+                  ),
+                  onPressed: _toggleFlash,
+                ),
+                IconButton(
+                  icon: Icon(Icons.switch_camera, color: Colors.white),
+                  onPressed: _flipCamera,
+                ),
+                IconButton(
+                  icon: Icon(Icons.more_vert, color: Colors.white),
+                  onPressed: () {
+                    // Add more options functionality here
+                  },
+                ),
+              ],
             ),
-            SizedBox(height: 10),
-            Text(
-              'Nama Hewan: ${predictionResult['Animal_Name']}',
-              style: TextStyle(fontSize: 16),
+          ),
+          Center(
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.white, width: 2),
+              ),
+              width: 200,
+              height: 200,
             ),
-            SizedBox(height: 10),
-            Text(
-              'Tersimpan Kedalam History',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  GestureDetector(
+                    onTap: _captureImage,
+                    child: CircleAvatar(
+                      radius: 30,
+                      backgroundColor: Colors.white,
+                      child: Icon(Icons.camera_alt, color: Colors.black),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Sesuaikan posisi mata kambing agar memenuhi Frame',
+                    style: TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: _selectImageFromGallery,
+                    child: const Text('Upload Gambar'),
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.white,
+                      onPrimary: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
