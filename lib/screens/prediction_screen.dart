@@ -324,15 +324,24 @@ class _PredictionScreenState extends State<PredictionScreen> {
             child: Container(
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.blue, width: 2),
+                borderRadius:
+                    BorderRadius.circular(20), // Adjust the corner radius
               ),
-              width: 200,
-              height: 200,
+              width: 290,
+              height: 280,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(
+                    20), // Same as the container's border radius
+                child: Container(
+                  color: Colors.transparent, // Keep the center transparent
+                ),
+              ),
             ),
           ),
           Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(50.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -344,13 +353,13 @@ class _PredictionScreenState extends State<PredictionScreen> {
                       child: Icon(Icons.camera_alt, color: Colors.white),
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 15),
                   const Text(
                     'Sesuaikan posisi mata kambing agar memenuhi Frame',
                     style: TextStyle(color: Colors.white),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 90),
+                  const SizedBox(height: 15), // Adjust the spacing as needed
                   ElevatedButton(
                     onPressed: _selectImageFromGallery,
                     style: ElevatedButton.styleFrom(
@@ -369,6 +378,7 @@ class _PredictionScreenState extends State<PredictionScreen> {
                       ],
                     ),
                   ),
+                  const SizedBox(height: 90),
                 ],
               ),
             ),
