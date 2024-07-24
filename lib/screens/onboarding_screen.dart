@@ -12,8 +12,8 @@ class OnBoard {
       {required this.image, required this.title, required this.description});
 }
 
-// Demo data for onboarding
-final List<OnBoard> demoData = [
+// message data for onboarding
+final List<OnBoard> messageData = [
   OnBoard(
     image: 'assets/gambar/onboarding1.png',
     title: "Welcome",
@@ -76,7 +76,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   }
 
   void _onNext() {
-    if (_pageController.page == demoData.length - 1) {
+    if (_pageController.page == messageData.length - 1) {
       _onSkip();
     } else {
       _pageController.nextPage(
@@ -116,13 +116,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         children: [
           PageView.builder(
             controller: _pageController,
-            itemCount: demoData.length,
+            itemCount: messageData.length,
             onPageChanged: _onPageChanged,
             itemBuilder: (context, index) {
               return _buildPageContent(
-                title: demoData[index].title,
-                body: demoData[index].description,
-                imagePath: demoData[index].image,
+                title: messageData[index].title,
+                body: messageData[index].description,
+                imagePath: messageData[index].image,
               );
             },
           ),
@@ -149,7 +149,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
-                demoData.length,
+                messageData.length,
                 (index) => AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
                   height: 5,
