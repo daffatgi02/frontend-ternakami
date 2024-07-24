@@ -4,8 +4,17 @@ import 'package:ternakami/screens/history_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final String token;
+  final String fullname;
+  final int userid;
+  final String email;
 
-  const HomeScreen({Key? key, required this.token}) : super(key: key);
+  const HomeScreen({
+    Key? key,
+    required this.token,
+    required this.fullname,
+    required this.userid,
+    required this.email,
+  }) : super(key: key);
 
   void navigateToPrediction(BuildContext context) {
     Navigator.push(
@@ -29,7 +38,9 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('Welcome!'),
+            Text('Hallo $fullname!'),
+            Text('UserID: $userid'),
+            Text('Email: $email'),
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () => navigateToPrediction(context),
