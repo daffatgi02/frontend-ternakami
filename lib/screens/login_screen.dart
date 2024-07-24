@@ -28,7 +28,12 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) => HomeScreen(token: result.token)),
+              builder: (context) => HomeScreen(
+                    token: result.token,
+                    fullname: result.fullname,
+                    userid: result.userid,
+                    email: result.email, // Pass email here
+                  )),
         );
       } else {
         showErrorSnackBar("Kata Sandi Salah atau Akun tidak ditemukan!");

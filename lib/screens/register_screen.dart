@@ -186,23 +186,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     // Debug button for testing success dialog
                     const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: showSuccessDialog,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.grey,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                      ),
-                      child: const Text(
-                        'Debug Success Dialog',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),
