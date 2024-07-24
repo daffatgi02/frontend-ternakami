@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:ternakami/screens/onboarding_screen.dart';
+import 'package:ternakami/screens/splash_screen.dart';
 
 void main() {
   runApp(const MainApp());
@@ -13,8 +13,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         primaryColor: Colors.blue,
-        // ignore: prefer_const_constructors
-        buttonTheme: ButtonThemeData(
+        buttonTheme: const ButtonThemeData(
           buttonColor: Colors.blue,
           textTheme: ButtonTextTheme.primary,
         ),
@@ -25,7 +24,7 @@ class MainApp extends StatelessWidget {
           ),
         ),
       ),
-      home: const OnboardingScreen(),
+      home: const SplashScreen(),
     );
   }
 }
