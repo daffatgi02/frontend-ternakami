@@ -247,7 +247,7 @@ class SliverSearchAppBar extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 200;
+  double get maxExtent => 209;
 
   @override
   double get minExtent => 140;
