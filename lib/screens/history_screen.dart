@@ -63,124 +63,129 @@ class _HistoryScreenState extends State<HistoryScreen> {
     return Scaffold(
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _history.isEmpty
-              ? const Center(child: Text('Tidak ditemukan riwayat prediksi.'))
-              : CustomScrollView(
-                  slivers: [
-                    SliverPersistentHeader(
-                      delegate: SliverSearchAppBar(_searchController),
-                      pinned: true,
-                    ),
-                    SliverPadding(
-                      padding: const EdgeInsets.all(8.0),
-                      sliver: SliverGrid(
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.75,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
-                        ),
-                        delegate: SliverChildBuilderDelegate(
-                          (BuildContext context, int index) {
-                            final history = _filteredHistory[index];
-                            return AnimatedContainer(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut,
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                elevation: 4,
-                                child: InkWell(
-                                  onTap: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
+          : CustomScrollView(
+              slivers: [
+                SliverPersistentHeader(
+                  delegate: SliverSearchAppBar(_searchController),
+                  pinned: true,
+                ),
+                SliverPadding(
+                  padding: const EdgeInsets.all(8.0),
+                  sliver: _filteredHistory.isEmpty
+                      ? const SliverFillRemaining(
+                          child: Center(
+                            child:
+                                const Text('Tidak ditemukan riwayat prediksi.'),
+                          ),
+                        )
+                      : SliverGrid(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.75,
+                            crossAxisSpacing: 10,
+                            mainAxisSpacing: 10,
+                          ),
+                          delegate: SliverChildBuilderDelegate(
+                            (BuildContext context, int index) {
+                              final history = _filteredHistory[index];
+                              return AnimatedContainer(
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  elevation: 4,
+                                  child: InkWell(
+                                    onTap: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                          content: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                                child: Image.network(
+                                                  history.imageUrl,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                              const SizedBox(height: 8),
+                                              Text(
+                                                'Nama Hewan: ${history.animalName}',
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                ),
+                                              ),
+                                              Text(
+                                                'Prediksi: ${history.predictionClass}',
+                                                style: TextStyle(
+                                                  color: Colors.grey[700],
+                                                ),
+                                              ),
+                                              Text(
+                                                'Tanggal Prediksi: ${history.formattedCreatedAt}',
+                                                style: TextStyle(
+                                                  color: Colors.grey[600],
+                                                  fontSize: 12,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                        content: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                              child: Image.network(
-                                                history.imageUrl,
-                                                fit: BoxFit.cover,
-                                              ),
+                                      );
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            child: Image.network(
+                                              history.imageUrl,
+                                              width: double.infinity,
+                                              height: 120,
+                                              fit: BoxFit.cover,
                                             ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              'Nama Hewan: ${history.animalName}',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                              ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            history.predictionClass,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 16,
                                             ),
-                                            Text(
-                                              'Prediksi: ${history.predictionClass}',
-                                              style: TextStyle(
-                                                color: Colors.grey[700],
-                                              ),
+                                          ),
+                                          Text(
+                                            'Nama: ${history.animalName}',
+                                            style: TextStyle(
+                                              color: Colors.grey[700],
                                             ),
-                                            Text(
-                                              'Tanggal Prediksi: ${history.formattedCreatedAt}',
-                                              style: TextStyle(
-                                                color: Colors.grey[600],
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
-                                    );
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(10),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(8.0),
-                                          child: Image.network(
-                                            history.imageUrl,
-                                            width: double.infinity,
-                                            height: 120,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          history.predictionClass,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                        Text(
-                                          'Nama: ${history.animalName}',
-                                          style: TextStyle(
-                                            color: Colors.grey[700],
-                                          ),
-                                        ),
-                                      ],
                                     ),
                                   ),
                                 ),
-                              ),
-                            );
-                          },
-                          childCount: _filteredHistory.length,
+                              );
+                            },
+                            childCount: _filteredHistory.length,
+                          ),
                         ),
-                      ),
-                    ),
-                  ],
                 ),
+              ],
+            ),
     );
   }
 }
