@@ -10,8 +10,22 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: OnboardingScreen(),
+    return MaterialApp(
+      theme: ThemeData(
+        primaryColor: Colors.blue,
+        // ignore: prefer_const_constructors
+        buttonTheme: ButtonThemeData(
+          buttonColor: Colors.blue,
+          textTheme: ButtonTextTheme.primary,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            foregroundColor: Colors.white,
+            backgroundColor: Colors.blue, // foreground (text) color
+          ),
+        ),
+      ),
+      home: const OnboardingScreen(),
     );
   }
 }
