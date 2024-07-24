@@ -18,7 +18,8 @@ class PredictionScreen extends StatefulWidget {
   _PredictionScreenState createState() => _PredictionScreenState();
 }
 
-class _PredictionScreenState extends State<PredictionScreen> {
+class _PredictionScreenState extends State<PredictionScreen>
+    with SingleTickerProviderStateMixin {
   CameraController? _cameraController;
   List<CameraDescription>? _cameras;
   bool _isRearCameraSelected = true;
@@ -26,17 +27,32 @@ class _PredictionScreenState extends State<PredictionScreen> {
   XFile? _image;
   final ImagePicker _picker = ImagePicker();
   String? _selectedType;
-  final List<String> _types = ['sapi', 'kambing'];
+  final List<String> _types = ['kambing'];
   final TextEditingController _animalNameController = TextEditingController();
   final ApiService _apiService = ApiService();
 
   final CropController _cropController = CropController();
   final BoxShape _shape = BoxShape.rectangle;
 
+  late AnimationController _scanController;
+  late Animation<double> _scanAnimation;
+
   @override
   void initState() {
     super.initState();
     _initializeCamera();
+    _scanController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+    _scanAnimation = Tween<double>(begin: 0, end: 280).animate(_scanController);
+  }
+
+  @override
+  void dispose() {
+    _cameraController?.dispose();
+    _scanController.dispose();
+    super.dispose();
   }
 
   Future<void> _initializeCamera() async {
@@ -269,12 +285,6 @@ class _PredictionScreenState extends State<PredictionScreen> {
   }
 
   @override
-  void dispose() {
-    _cameraController?.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -321,21 +331,39 @@ class _PredictionScreenState extends State<PredictionScreen> {
             ),
           ),
           Center(
-            child: Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.blue, width: 2),
-                borderRadius:
-                    BorderRadius.circular(20), // Adjust the corner radius
-              ),
-              width: 290,
-              height: 280,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(
-                    20), // Same as the container's border radius
-                child: Container(
-                  color: Colors.transparent, // Keep the center transparent
+            child: Stack(
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.blue, width: 2),
+                    borderRadius:
+                        BorderRadius.circular(20), // Adjust the corner radius
+                  ),
+                  width: 290,
+                  height: 280,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(
+                        20), // Same as the container's border radius
+                    child: Container(
+                      color: Colors.transparent, // Keep the center transparent
+                    ),
+                  ),
                 ),
-              ),
+                AnimatedBuilder(
+                  animation: _scanController,
+                  builder: (context, child) {
+                    return Positioned(
+                      top: _scanAnimation.value,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 2,
+                        color: Colors.blue,
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
           Align(
