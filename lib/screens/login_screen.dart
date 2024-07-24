@@ -25,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final result = await apiService.login(email, password);
       if (result != null) {
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(
               builder: (context) => HomeScreen(token: result.token)),

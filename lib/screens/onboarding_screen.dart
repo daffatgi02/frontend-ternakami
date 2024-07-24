@@ -1,5 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:ternakami/screens/login_screen.dart';
+
+// Model for OnBoard data
+class OnBoard {
+  final String image;
+  final String title;
+  final String description;
+
+  OnBoard(
+      {required this.image, required this.title, required this.description});
+}
+
+// Demo data for onboarding
+final List<OnBoard> demoData = [
+  OnBoard(
+    image: 'assets/gambar/onboarding1.png',
+    title: "Welcome",
+    description:
+        "Welcome to our application. This is the first page of onboarding.",
+  ),
+  OnBoard(
+    image: 'assets/gambar/onboarding2.png',
+    title: "Features",
+    description: "Here are some of the features of our application.",
+  ),
+  OnBoard(
+    image: 'assets/gambar/onboarding3.png',
+    title: "Get Started",
+    description: "Let's get started!",
+  ),
+];
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -12,6 +43,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     with SingleTickerProviderStateMixin {
   late PageController _pageController;
   late AnimationController _animationController;
+  int currentPage = 0;
 
   @override
   void initState() {
@@ -19,16 +51,21 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     _pageController = PageController(initialPage: 0);
     _animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 300));
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: []);
   }
 
   @override
   void dispose() {
     _pageController.dispose();
     _animationController.dispose();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
     super.dispose();
   }
 
   void _onPageChanged(int page) {
+    setState(() {
+      currentPage = page;
+    });
     _animationController.forward(from: 0.0);
   }
 
@@ -39,7 +76,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   }
 
   void _onNext() {
-    if (_pageController.page == 2) {
+    if (_pageController.page == demoData.length - 1) {
       _onSkip();
     } else {
       _pageController.nextPage(
@@ -77,27 +114,17 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     return Scaffold(
       body: Stack(
         children: [
-          PageView(
+          PageView.builder(
             controller: _pageController,
+            itemCount: demoData.length,
             onPageChanged: _onPageChanged,
-            children: [
-              _buildPageContent(
-                title: 'Welcome',
-                body:
-                    'Welcome to our application. This is the first page of onboarding.',
-                imagePath: 'assets/gambar/onboarding1.png',
-              ),
-              _buildPageContent(
-                title: 'Features',
-                body: 'Here are some of the features of our application.',
-                imagePath: 'assets/gambar/onboarding2.png',
-              ),
-              _buildPageContent(
-                title: 'Get Started',
-                body: 'Let\'s get started!',
-                imagePath: 'assets/gambar/onboarding3.png',
-              ),
-            ],
+            itemBuilder: (context, index) {
+              return _buildPageContent(
+                title: demoData[index].title,
+                body: demoData[index].description,
+                imagePath: demoData[index].image,
+              );
+            },
           ),
           Positioned(
             bottom: 20,
@@ -113,6 +140,27 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             child: TextButton(
               onPressed: _onNext,
               child: const Text('Next'),
+            ),
+          ),
+          Positioned(
+            bottom: 50,
+            left: 0,
+            right: 0,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                demoData.length,
+                (index) => AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  height: 5,
+                  width: currentPage == index ? 15 : 5,
+                  margin: const EdgeInsets.symmetric(horizontal: 5),
+                  decoration: BoxDecoration(
+                    color: currentPage == index ? Colors.blue : Colors.grey,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                ),
+              ),
             ),
           ),
         ],
