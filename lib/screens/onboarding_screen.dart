@@ -16,19 +16,20 @@ class OnBoard {
 final List<OnBoard> messageData = [
   OnBoard(
     image: 'assets/gambar/onboarding1.png',
-    title: "Welcome",
+    title: "Selamat Datang di Aplikasi Ternakami",
     description:
-        "Welcome to our application. This is the first page of onboarding.",
+        "Aplikasi Pendeteksi Penyakit Mata Pink Eye pada Hewan Kambing!",
   ),
   OnBoard(
     image: 'assets/gambar/onboarding2.png',
-    title: "Features",
-    description: "Here are some of the features of our application.",
+    title: "Fitur",
+    description:
+        "Gunakan aplikasi ini untuk memprediksi mata kambing dengan fitur Scan, melihat riwayat prediksi kambing, dan membaca artikel tentang pink eye.",
   ),
   OnBoard(
     image: 'assets/gambar/onboarding3.png',
-    title: "Get Started",
-    description: "Let's get started!",
+    title: "Ayo Mulai!",
+    description: "",
   ),
 ];
 
@@ -97,7 +98,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
         ),
         Text(
           title,
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 16),
         Text(
@@ -131,7 +132,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             left: 20,
             child: TextButton(
               onPressed: _onSkip,
-              child: const Text('Skip'),
+              child: const Text('Skip', style: TextStyle(color: Colors.blue)),
             ),
           ),
           Positioned(
@@ -139,7 +140,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             right: 20,
             child: TextButton(
               onPressed: _onNext,
-              child: const Text('Next'),
+              child: const Text('Next', style: TextStyle(color: Colors.blue)),
             ),
           ),
           Positioned(

@@ -156,7 +156,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           onPressed: () {
                             // Implement forgot password functionality
                           },
-                          child: const Text('Lupa Password?'),
+                          child: const Text(
+                            'Lupa Password?',
+                            style: TextStyle(color: Colors.blue),
+                          ),
                         ),
                       ],
                     ),
@@ -187,7 +190,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               builder: (context) => const RegisterScreen()),
                         );
                       },
-                      child: const Text('Belum punya akun? Daftar di sini'),
+                      child: const Text('Belum punya akun? Daftar di sini',
+                          style: TextStyle(color: Colors.blue)),
                     ),
                   ],
                 ),

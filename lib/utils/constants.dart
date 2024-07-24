@@ -1,1 +1,1 @@
-const String BASE_URL = 'http://192.168.18.25:3000';
+const String BASE_URL = 'https://project-backendternakami.et.r.appspot.com';

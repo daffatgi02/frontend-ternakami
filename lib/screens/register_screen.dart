@@ -182,7 +182,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: const Text('Sudah memiliki akun? Masuk di sini.'),
+                      child: const Text('Sudah memiliki akun? Masuk di sini.',
+                          style: TextStyle(color: Colors.blue)),
                     ),
                     // Debug button for testing success dialog
                     const SizedBox(height: 20),
