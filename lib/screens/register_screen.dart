@@ -24,11 +24,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       final result = await apiService.register(email, password, fullname);
       if (result) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              content: Text("Pendaftaran Akun Berhasil. Silakan Masuk")),
-        );
-        Navigator.pop(context);
+        showSuccessDialog();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -37,6 +33,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       }
     }
+  }
+
+  void showSuccessDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/animations/sukses.gif',
+              width: 101,
+              height: 101,
+            ),
+            const SizedBox(height: 10),
+            const Text("Pendaftaran Akun Berhasil!"),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+              Navigator.pop(context);
+            },
+            child: const Text('Selesai'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -148,7 +173,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         'Daftar',
                         style: TextStyle(
                           fontSize: 18,
-                          color: Colors.white, // Menambahkan warna putih
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -158,6 +183,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         Navigator.pop(context);
                       },
                       child: const Text('Sudah memiliki akun? Masuk di sini.'),
+                    ),
+                    // Debug button for testing success dialog
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: showSuccessDialog,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: const Text(
+                        'Debug Success Dialog',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ],
                 ),
