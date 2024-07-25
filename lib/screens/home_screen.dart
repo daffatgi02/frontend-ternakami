@@ -51,19 +51,26 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: PageView(
-          controller: _pageController,
-          onPageChanged: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
+        child: Column(
           children: [
-            _buildHomeContent(),
-            ProfileScreen(
-              token: widget.token,
-              fullname: widget.fullname,
-              email: widget.email,
+            _buildAppBar(),
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    _selectedIndex = index;
+                  });
+                },
+                children: [
+                  _buildHomeContent(),
+                  ProfileScreen(
+                    token: widget.token,
+                    fullname: widget.fullname,
+                    email: widget.email,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -85,6 +92,25 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  Widget _buildAppBar() {
+    return ClipPath(
+      clipper: CustomAppBarClipper(),
+      child: Container(
+        height: 220,
+        color: Colors.blue,
+        alignment: Alignment.center,
+        child: const Text(
+          '',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildHomeContent() {
     return FutureBuilder<List<Article>>(
       future: _articles,
@@ -98,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
 
         final articles = snapshot.data!;
-        final articlesToShow = articles.take(5).toList();
+        final articlesToShow = articles.take(3).toList();
 
         return SingleChildScrollView(
           child: Padding(
@@ -116,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 10),
                 const Text(
-                  'Chek Kambing Kamu Sekarang',
+                  'Check Kambing Kamu Sekarang',
                   style: TextStyle(fontSize: 16, color: Colors.black),
                 ),
                 const SizedBox(height: 20),
@@ -137,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                _buildInterestingArticlesSection(articlesToShow),
+                _buildInterestingArticlesSection(articlesToShow, articles),
               ],
             ),
           ),
@@ -146,7 +172,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildInterestingArticlesSection(List<Article> articles) {
+  Widget _buildInterestingArticlesSection(
+      List<Article> articlesToShow, List<Article> allArticles) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -166,7 +193,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AllArticlesScreen(articles: articles),
+                    builder: (context) =>
+                        AllArticlesScreen(articles: allArticles),
                   ),
                 );
               },
@@ -194,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: articles
+            children: articlesToShow
                 .map((article) => _ArticleCard(article: article))
                 .toList(),
           ),
@@ -210,6 +238,28 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context) => PredictionScreen(token: widget.token),
       ),
     );
+  }
+}
+
+class CustomAppBarClipper extends CustomClipper<Path> {
+  @override
+  Path getClip(Size size) {
+    final path = Path();
+    path.lineTo(0, size.height - 50);
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height,
+      size.width,
+      size.height - 50,
+    );
+    path.lineTo(size.width, 0);
+    path.close();
+    return path;
+  }
+
+  @override
+  bool shouldReclip(CustomClipper<Path> oldClipper) {
+    return false;
   }
 }
 

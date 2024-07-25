@@ -44,7 +44,7 @@ class OnboardingScreen extends StatelessWidget {
                 "Prediksi mata kambing dengan fitur Scan, lihat riwayat prediksi, dan baca artikel tentang pink eye.",
             image: Center(
               child: Image.asset(
-                'assets/gambar/onboarding2.png',
+                'assets/gambar/logo.png',
                 height: screenHeight * 0.3,
               ),
             ),
@@ -67,7 +67,7 @@ class OnboardingScreen extends StatelessWidget {
             body: "Mari jelajahi aplikasi ini!",
             image: Center(
               child: Image.asset(
-                'assets/gambar/logo.png',
+                'assets/gambar/onboarding2.png',
                 height: screenHeight * 0.3,
               ),
             ),

@@ -176,7 +176,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                             child: Image.network(
                                               history.imageUrl,
                                               width: double.infinity,
-                                              height: 120,
+                                              height: 190,
                                               fit: BoxFit.cover,
                                             ),
                                           ),
