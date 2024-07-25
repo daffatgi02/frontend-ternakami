@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:ternakami/screens/prediction_screen.dart';
-import 'package:ternakami/screens/history_screen.dart';
 import 'package:ternakami/screens/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -26,6 +25,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   late PageController _pageController;
+  final List<String> _titles = ['Ternakami', 'Ternakami'];
 
   @override
   void initState() {
@@ -45,10 +45,14 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
-        title: const Text(
-          'Ternakami',
-          style: TextStyle(color: Colors.black),
+        backgroundColor: Color.fromARGB(255, 255, 255, 255),
+        title: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 300),
+          child: Text(
+            _titles[_selectedIndex],
+            key: ValueKey<String>(_titles[_selectedIndex]),
+            style: const TextStyle(color: Colors.black),
+          ),
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
@@ -87,36 +91,91 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Halo ${widget.fullname}!',
-                style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () => navigateToPrediction(context),
-              child: const Text('Predict Animal Eye'),
+            Text(
+              'Holla, ${widget.fullname}!',
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 10),
             const Text(
-              'Artikel Ternak Terbaru',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              'Chek Kambing Kamu Sekarang',
+              style: TextStyle(fontSize: 16, color: Colors.black),
             ),
-            const Card(
-              child: ListTile(
-                title: Text('Artikel 1'),
-                subtitle: Text('Deskripsi artikel 1...'),
+            const SizedBox(height: 20),
+            Center(
+              child: ElevatedButton.icon(
+                onPressed: () => navigateToPrediction(context),
+                icon: const Icon(Icons.camera_alt),
+                label: const Text('Prediksi Kambingmu!'),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32.0,
+                    vertical: 12.0,
+                  ),
+                ),
               ),
             ),
-            const Card(
-              child: ListTile(
-                title: Text('Artikel 2'),
-                subtitle: Text('Deskripsi artikel 2...'),
-              ),
-            ),
+            const SizedBox(height: 20),
+            _buildInterestingArticlesSection(),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildInterestingArticlesSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Artikel Menarik',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: const Text('Lihat Semua'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        const SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              _ArticleCard(
+                imageUrl: 'https://via.placeholder.com/150',
+                title: 'Artikel 1',
+                description: 'Deskripsi artikel 1...',
+              ),
+              SizedBox(width: 10),
+              _ArticleCard(
+                imageUrl: 'https://via.placeholder.com/150',
+                title: 'Artikel 2',
+                description: 'Deskripsi artikel 2...',
+              ),
+              SizedBox(width: 10),
+              _ArticleCard(
+                imageUrl: 'https://via.placeholder.com/150',
+                title: 'Artikel 3',
+                description: 'Deskripsi artikel 3...',
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -124,15 +183,57 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => PredictionScreen(token: widget.token)),
+        builder: (context) => PredictionScreen(token: widget.token),
+      ),
     );
   }
+}
 
-  void navigateToHistory(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => HistoryScreen(token: widget.token)),
+class _ArticleCard extends StatelessWidget {
+  final String imageUrl;
+  final String title;
+  final String description;
+
+  const _ArticleCard({
+    required this.imageUrl,
+    required this.title,
+    required this.description,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: SizedBox(
+        width: 200,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: 150,
+            ),
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(description),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
