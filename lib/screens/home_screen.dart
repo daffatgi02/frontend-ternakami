@@ -1,6 +1,3 @@
-// lib/screens/home_screen.dart
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:flutter/material.dart';
 import 'package:ternakami/models/article.dart';
 import 'package:ternakami/services/article_service.dart';
@@ -101,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
         }
 
         final articles = snapshot.data!;
-        final articlesToShow = articles.take(3).toList();
+        final articlesToShow = articles.take(5).toList();
 
         return SingleChildScrollView(
           child: Padding(
@@ -141,18 +138,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 20),
                 _buildInterestingArticlesSection(articlesToShow),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            AllArticlesScreen(articles: articles),
-                      ),
-                    );
-                  },
-                  child: const Text('Lihat Selengkapnya'),
-                ),
               ],
             ),
           ),
@@ -165,13 +150,45 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Artikel Menarik',
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Artikel Menarik',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            OutlinedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AllArticlesScreen(articles: articles),
+                  ),
+                );
+              },
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(
+                    color: Colors.blue,
+                    width: 1.0), // Menambahkan ukuran outline
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                minimumSize: const Size(
+                    50, 30), // Menambahkan ukuran tombol (width, height)
+              ),
+              child: const Text(
+                'Lihat Semua',
+                style: TextStyle(
+                  color: Colors.blue,
+                  fontSize: 12, // Menambahkan fontSize
+                ),
+              ),
+            ),
+          ],
         ),
         const SizedBox(height: 10),
         SingleChildScrollView(
@@ -215,31 +232,36 @@ class _ArticleCard extends StatelessWidget {
         );
       },
       child: Card(
+        margin: const EdgeInsets.only(right: 16.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
         child: SizedBox(
-          width: 200,
+          width: 250,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.network(
-                article.imgUrl,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: 180,
+              ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(10.0),
+                  topRight: Radius.circular(10.0),
+                ),
+                child: Image.network(
+                  article.imgUrl,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  height: 190,
+                ),
               ),
               Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      article.title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                  ],
+                padding: const EdgeInsets.all(12.0),
+                child: Text(
+                  article.title,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
                 ),
               ),
             ],
