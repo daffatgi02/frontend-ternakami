@@ -98,17 +98,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return ClipPath(
       clipper: CustomAppBarClipper(),
       child: Container(
-        height: 220,
+        height: 130,
         color: Colors.blue,
         alignment: Alignment.center,
-        child: const Text(
-          '',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
       ),
     );
   }
