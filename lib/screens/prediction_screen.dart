@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+
 import 'dart:ui' as ui;
 import 'dart:io';
 import 'package:flutter/material.dart';
@@ -12,7 +14,7 @@ import 'hasilprediksi_screen.dart';
 class PredictionScreen extends StatefulWidget {
   final String token;
 
-  const PredictionScreen({Key? key, required this.token}) : super(key: key);
+  const PredictionScreen({super.key, required this.token});
 
   @override
   _PredictionScreenState createState() => _PredictionScreenState();

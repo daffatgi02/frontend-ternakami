@@ -5,10 +5,10 @@ class ProfileScreen extends StatelessWidget {
   final String email;
 
   const ProfileScreen({
-    Key? key,
+    super.key,
     required this.fullname,
     required this.email,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

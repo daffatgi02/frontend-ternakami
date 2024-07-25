@@ -26,7 +26,7 @@ class ApiService {
   Future<User?> login(String email, String password) async {
     try {
       final response = await _dio.post(
-        '$BASE_URL/api/auth/login',
+        '$baseUrl/api/auth/login',
         options: Options(headers: {'Content-Type': 'application/json'}),
         data: jsonEncode({'email': email, 'password': password}),
       );
@@ -45,7 +45,7 @@ class ApiService {
   Future<bool> register(String email, String password, String fullname) async {
     try {
       final response = await _dio.post(
-        '$BASE_URL/api/auth/register',
+        '$baseUrl/api/auth/register',
         options: Options(headers: {'Content-Type': 'application/json'}),
         data: jsonEncode(
             {'email': email, 'password': password, 'fullname': fullname}),
@@ -61,7 +61,7 @@ class ApiService {
   Future<String?> getHomePageData(String token) async {
     try {
       final response = await _dio.get(
-        '$BASE_URL/api/homepage',
+        '$baseUrl/api/homepage',
         options: Options(
           headers: {
             'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ class ApiService {
       });
 
       final response = await _dio.post(
-        '$BASE_URL/api/predict',
+        '$baseUrl/api/predict',
         data: formData,
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
@@ -118,7 +118,7 @@ class ApiService {
   Future<List<History>?> getHistory(String token) async {
     try {
       final response = await _dio.get(
-        '$BASE_URL/api/historyPredict',
+        '$baseUrl/api/historyPredict',
         options: Options(
           headers: {
             'Content-Type': 'application/json',

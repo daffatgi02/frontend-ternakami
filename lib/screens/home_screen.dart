@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:ternakami/screens/prediction_screen.dart';
 import 'package:ternakami/screens/history_screen.dart';
@@ -12,12 +14,12 @@ class HomeScreen extends StatefulWidget {
   final String email;
 
   const HomeScreen({
-    Key? key,
+    super.key,
     required this.token,
     required this.fullname,
     required this.userid,
     required this.email,
-  }) : super(key: key);
+  });
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -120,13 +122,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 leading: Image.network(prediction.imageUrl,
                                     width: 50, height: 50),
                                 title: Text(prediction.animalName,
-                                    style: TextStyle(color: Colors.black)),
+                                    style: const TextStyle(color: Colors.black)),
                                 subtitle: Text(
                                     'Class: ${prediction.predictionClass}, Probability: ${prediction.predictionProbability}',
-                                    style: TextStyle(color: Colors.black)),
+                                    style: const TextStyle(color: Colors.black)),
                               ),
                             );
-                          }).toList(),
+                          }),
                           TextButton(
                             onPressed: () => navigateToHistory(context),
                             child: const Text('Lihat Selengkapnya',

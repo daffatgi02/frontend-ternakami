@@ -1,1 +1,1 @@
-const String BASE_URL = 'https://project-backendternakami.et.r.appspot.com';
+const String baseUrl = 'https://project-backendternakami.et.r.appspot.com';

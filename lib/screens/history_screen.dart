@@ -1,3 +1,5 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:ternakami/models/history.dart';
 import 'package:ternakami/services/api_service.dart';
@@ -5,7 +7,7 @@ import 'package:ternakami/services/api_service.dart';
 class HistoryScreen extends StatefulWidget {
   final String token;
 
-  const HistoryScreen({Key? key, required this.token}) : super(key: key);
+  const HistoryScreen({super.key, required this.token});
 
   @override
   _HistoryScreenState createState() => _HistoryScreenState();
@@ -75,7 +77,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       ? const SliverFillRemaining(
                           child: Center(
                             child:
-                                const Text('Tidak ditemukan riwayat prediksi.'),
+                                Text('Tidak ditemukan riwayat prediksi.'),
                           ),
                         )
                       : SliverGrid(
