@@ -233,7 +233,7 @@ class SliverSearchAppBar extends SliverPersistentHeaderDelegate {
             child: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFF3572EF), Color(0xFF4A90E2)],
+                  colors: [Color(0xFF2196F3), Color(0xFF2196F3)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -241,9 +241,45 @@ class SliverSearchAppBar extends SliverPersistentHeaderDelegate {
             ),
           ),
           Positioned(
+            left: 16,
+            right: 16,
+            top: 39,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Riwayat Prediksi',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      'Cari Hewan mu disini!',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                Image.asset(
+                  'assets/gambar/logo.png',
+                  width: 70,
+                  height: 70,
+                ),
+              ],
+            ),
+          ),
+          Positioned(
             left: 0,
             right: 0,
-            top: 80,
+            top: 120,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Container(
@@ -265,7 +301,7 @@ class SliverSearchAppBar extends SliverPersistentHeaderDelegate {
                         controller: _searchController,
                         decoration: const InputDecoration(
                           prefixIcon: Icon(Icons.search, color: Colors.grey),
-                          hintText: 'Cari berdasarkan nama hewan...',
+                          hintText: 'Cari nama peliharaan...',
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(vertical: 15),
                         ),
@@ -305,10 +341,10 @@ class SliverSearchAppBar extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 200;
+  double get maxExtent => 220;
 
   @override
-  double get minExtent => 140;
+  double get minExtent => 177;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>

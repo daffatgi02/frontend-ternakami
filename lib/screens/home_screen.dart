@@ -1,8 +1,9 @@
-// ignore_for_file: unused_field, library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:ternakami/screens/prediction_screen.dart';
 import 'package:ternakami/screens/profile_screen.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   final String token;
@@ -41,6 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final double bottomPadding = MediaQuery.of(context).viewPadding.bottom;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -61,14 +64,19 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        currentIndex: _selectedIndex,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-        onTap: _onItemTapped,
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.only(bottom: bottomPadding),
+        child: CurvedNavigationBar(
+          backgroundColor: Colors.transparent,
+          color: Colors.blue,
+          height: 60, // Height set to the maximum allowed value
+          items: const [
+            Icon(Icons.home, size: 30, color: Colors.white),
+            Icon(Icons.person, size: 30, color: Colors.white),
+          ],
+          index: _selectedIndex,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }
