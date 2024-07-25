@@ -1,136 +1,143 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
+import 'package:dio/dio.dart';
+import 'package:mime/mime.dart'; // For lookupMimeType
+import 'package:http_parser/http_parser.dart'; // Add this line
 import 'package:ternakami/models/user.dart';
 import 'package:ternakami/models/history.dart';
 import 'package:ternakami/utils/constants.dart';
+import 'package:logging/logging.dart';
 
 class ApiService {
+  final Dio _dio = Dio();
+  final Logger _logger = Logger('ApiService');
+
+  ApiService() {
+    _setupLogging();
+  }
+
+  void _setupLogging() {
+    Logger.root.level = Level.ALL;
+    Logger.root.onRecord.listen((record) {
+      print('${record.level.name}: ${record.time}: ${record.message}');
+    });
+  }
+
   Future<User?> login(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$BASE_URL/api/auth/login'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'email': email, 'password': password}),
-    );
-    print('DEBUG: Login response status code: ${response.statusCode}');
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return User.fromJson(data['loginResult']);
-    } else if (response.statusCode == 400) {
-      // Wrong Password or Account not found
+    try {
+      final response = await _dio.post(
+        '$BASE_URL/api/auth/login',
+        options: Options(headers: {'Content-Type': 'application/json'}),
+        data: jsonEncode({'email': email, 'password': password}),
+      );
+      _logger.fine('Login response status code: ${response.statusCode}');
+      if (response.statusCode == 200) {
+        final data = response.data;
+        return User.fromJson(data['loginResult']);
+      }
       return null;
-    } else {
-      // Handle other errors
+    } on DioException catch (e) {
+      _logger.severe('Login error: ${e.response?.statusCode} ${e.message}');
       return null;
     }
   }
 
   Future<bool> register(String email, String password, String fullname) async {
-    final response = await http.post(
-      Uri.parse('$BASE_URL/api/auth/register'),
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode(
-          {'email': email, 'password': password, 'fullname': fullname}),
-    );
+    try {
+      final response = await _dio.post(
+        '$BASE_URL/api/auth/register',
+        options: Options(headers: {'Content-Type': 'application/json'}),
+        data: jsonEncode(
+            {'email': email, 'password': password, 'fullname': fullname}),
+      );
 
-    if (response.statusCode == 201) {
-      return true;
-    } else if (response.statusCode == 400) {
-      // Email already taken or other validation error
-      return false;
-    } else {
-      // Handle other errors
+      return response.statusCode == 201;
+    } on DioException catch (e) {
+      _logger.severe('Register error: ${e.response?.statusCode} ${e.message}');
       return false;
     }
   }
 
   Future<String?> getHomePageData(String token) async {
-    final response = await http.get(
-      Uri.parse('$BASE_URL/api/homepage'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
+    try {
+      final response = await _dio.get(
+        '$BASE_URL/api/homepage',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return data['message'];
-    } else if (response.statusCode == 401) {
-      // Failed to authenticate token
+      if (response.statusCode == 200) {
+        final data = response.data;
+        return data['message'];
+      }
       return null;
-    } else {
-      // Handle other errors
+    } on DioException catch (e) {
+      _logger.severe(
+          'Get Home Page Data error: ${e.response?.statusCode} ${e.message}');
       return null;
     }
   }
 
   Future<Map<String, dynamic>?> predict(
       String token, File image, String type, String animalName) async {
-    var request = http.MultipartRequest(
-      'POST',
-      Uri.parse('$BASE_URL/api/predict'),
-    );
+    try {
+      FormData formData = FormData.fromMap({
+        'image': await MultipartFile.fromFile(image.path,
+            contentType: MediaType.parse(
+                lookupMimeType(image.path) ?? 'application/octet-stream')),
+        'type': type,
+        'Animal_Name': animalName,
+      });
 
-    request.headers['Authorization'] = 'Bearer $token';
-    request.files.add(
-      await http.MultipartFile.fromPath(
-        'image',
-        image.path,
-        contentType: MediaType('image', 'jpeg'), // Using MediaType
-      ),
-    );
-    request.fields['type'] = type;
-    request.fields['Animal_Name'] = animalName;
+      final response = await _dio.post(
+        '$BASE_URL/api/predict',
+        data: formData,
+        options: Options(headers: {'Authorization': 'Bearer $token'}),
+      );
 
-    print('DEBUG: Sending prediction request...');
-    var response = await request.send();
+      _logger.fine('Prediction request sent, awaiting response...');
 
-    print('DEBUG: Prediction request sent, awaiting response...');
-
-    if (response.statusCode == 200) {
-      print('DEBUG: Prediction request successful, processing response...');
-      var responseData = await response.stream.bytesToString();
-      print('DEBUG: Response data: $responseData');
-      return jsonDecode(responseData);
-    } else if (response.statusCode == 400) {
-      print('DEBUG: Prediction request failed with status code 400');
-      // No image, type, or Animal_Name specified
+      if (response.statusCode == 200) {
+        _logger.fine('Prediction request successful, processing response...');
+        return response.data;
+      }
+      _logger.severe(
+          'Prediction request failed with status code: ${response.statusCode}');
       return null;
-    } else if (response.statusCode == 401) {
-      print('DEBUG: Prediction request failed with status code 401');
-      // No token provided or Failed to authenticate token
-      return null;
-    } else if (response.statusCode == 500) {
-      print('DEBUG: Prediction request failed with status code 500');
-      // Error uploading image, Error saving prediction, or Error during prediction
-      return null;
-    } else {
-      print(
-          'DEBUG: Prediction request failed with unknown status code: ${response.statusCode}');
-      // Handle other errors
+    } on DioException catch (e) {
+      _logger
+          .severe('Prediction error: ${e.response?.statusCode} ${e.message}');
       return null;
     }
   }
 
   Future<List<History>?> getHistory(String token) async {
-    final response = await http.get(
-      Uri.parse('$BASE_URL/api/historyPredict'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
+    try {
+      final response = await _dio.get(
+        '$BASE_URL/api/historyPredict',
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
 
-    if (response.statusCode == 200) {
-      final List<dynamic> responseData = jsonDecode(response.body);
-      return responseData.map((data) => History.fromJson(data)).toList();
-    } else if (response.statusCode == 401) {
-      throw Exception('Unauthorized');
-    } else if (response.statusCode == 404) {
-      return [];
-    } else {
+      if (response.statusCode == 200) {
+        final List<dynamic> responseData = response.data;
+        return responseData.map((data) => History.fromJson(data)).toList();
+      } else if (response.statusCode == 404) {
+        return [];
+      } else {
+        throw Exception('Error fetching history');
+      }
+    } on DioException catch (e) {
+      _logger
+          .severe('Get History error: ${e.response?.statusCode} ${e.message}');
       throw Exception('Error fetching history');
     }
   }
