@@ -18,6 +18,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   List<History> _filteredHistory = [];
   bool _isLoading = true;
   final TextEditingController _searchController = TextEditingController();
+  String _selectedFilter = 'All';
 
   @override
   void initState() {
@@ -49,7 +50,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
     final query = _searchController.text.toLowerCase();
     setState(() {
       _filteredHistory = _history.where((history) {
-        return history.animalName.toLowerCase().contains(query);
+        final matchesQuery = history.animalName.toLowerCase().contains(query);
+        final matchesFilter = _selectedFilter == 'All' ||
+            (_selectedFilter == 'Pinkeye' &&
+                history.predictionClass == 'Mata Terjangkit PinkEye') ||
+            (_selectedFilter == 'Sehat' &&
+                history.predictionClass == 'Mata Terlihat Sehat');
+        return matchesQuery && matchesFilter;
       }).toList();
     });
   }
@@ -63,12 +70,22 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : CustomScrollView(
               slivers: [
                 SliverPersistentHeader(
-                  delegate: SliverSearchAppBar(_searchController),
+                  delegate: SliverSearchAppBar(
+                    _searchController,
+                    _selectedFilter,
+                    (filter) {
+                      setState(() {
+                        _selectedFilter = filter;
+                        _filterHistory();
+                      });
+                    },
+                  ),
                   pinned: true,
                 ),
                 SliverPadding(
@@ -76,8 +93,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   sliver: _filteredHistory.isEmpty
                       ? const SliverFillRemaining(
                           child: Center(
-                            child:
-                                Text('Tidak ditemukan riwayat prediksi.'),
+                            child: Text('Tidak ditemukan riwayat prediksi.',
+                                style: TextStyle(color: Colors.black)),
                           ),
                         )
                       : SliverGrid(
@@ -95,6 +112,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 duration: const Duration(milliseconds: 300),
                                 curve: Curves.easeInOut,
                                 child: Card(
+                                  color: Colors.blue[50],
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -125,6 +143,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                                 style: const TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16,
+                                                  color: Colors.black,
                                                 ),
                                               ),
                                               Text(
@@ -167,6 +186,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                             style: const TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 16,
+                                              color: Colors.black,
                                             ),
                                           ),
                                           Text(
@@ -194,8 +214,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
 class SliverSearchAppBar extends SliverPersistentHeaderDelegate {
   final TextEditingController _searchController;
+  final String _selectedFilter;
+  final ValueChanged<String> onFilterChanged;
 
-  SliverSearchAppBar(this._searchController);
+  SliverSearchAppBar(
+      this._searchController, this._selectedFilter, this.onFilterChanged);
 
   @override
   Widget build(
@@ -210,10 +233,9 @@ class SliverSearchAppBar extends SliverPersistentHeaderDelegate {
             child: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [
-                    Color(0xFF3572EF),
-                    Color.fromARGB(255, 38, 134, 252)
-                  ],
+                  colors: [Color(0xFF3572EF), Color(0xFF4A90E2)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
               ),
             ),
@@ -236,14 +258,43 @@ class SliverSearchAppBar extends SliverPersistentHeaderDelegate {
                     ),
                   ],
                 ),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.search, color: Colors.grey),
-                    hintText: 'Cari berdasarkan nama hewan...',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(vertical: 15),
-                  ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController,
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.search, color: Colors.grey),
+                          hintText: 'Cari berdasarkan nama hewan...',
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(vertical: 15),
+                        ),
+                      ),
+                    ),
+                    PopupMenuButton<String>(
+                      icon: Icon(
+                        _selectedFilter == 'All'
+                            ? Icons.filter_alt_outlined
+                            : Icons.filter_alt_rounded,
+                        color: Colors.grey,
+                      ),
+                      onSelected: onFilterChanged,
+                      itemBuilder: (context) => [
+                        const PopupMenuItem(
+                          value: 'All',
+                          child: Text('Semua'),
+                        ),
+                        const PopupMenuItem(
+                          value: 'Pinkeye',
+                          child: Text('Pinkeye'),
+                        ),
+                        const PopupMenuItem(
+                          value: 'Sehat',
+                          child: Text('Sehat'),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -254,7 +305,7 @@ class SliverSearchAppBar extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 209;
+  double get maxExtent => 200;
 
   @override
   double get minExtent => 140;

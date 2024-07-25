@@ -3,9 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:ternakami/screens/prediction_screen.dart';
 import 'package:ternakami/screens/history_screen.dart';
-import 'package:ternakami/screens/profile_screen.dart'; // Import ProfileScreen
-import 'package:ternakami/services/api_service.dart';
-import 'package:ternakami/models/history.dart';
+import 'package:ternakami/screens/profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final String token;
@@ -26,18 +24,91 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late Future<List<History>?> _latestPredictions;
+  int _selectedIndex = 0;
+  late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
-    _latestPredictions = ApiService().getHistory(widget.token);
+    _pageController = PageController();
   }
 
-  Future<void> _refreshData() async {
+  void _onItemTapped(int index) {
     setState(() {
-      _latestPredictions = ApiService().getHistory(widget.token);
+      _selectedIndex = index;
     });
+    _pageController.jumpToPage(index);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Ternakami')),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
+        children: [
+          _buildHomeContent(),
+          ProfileScreen(
+            token: widget.token,
+            fullname: widget.fullname,
+            email: widget.email,
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
+        ],
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+
+  Widget _buildHomeContent() {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Halo ${widget.fullname}!',
+                style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () => navigateToPrediction(context),
+              child: const Text('Predict Animal Eye'),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Artikel Ternak Terbaru',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const Card(
+              child: ListTile(
+                title: Text('Artikel 1'),
+                subtitle: Text('Deskripsi artikel 1...'),
+              ),
+            ),
+            const Card(
+              child: ListTile(
+                title: Text('Artikel 2'),
+                subtitle: Text('Deskripsi artikel 2...'),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void navigateToPrediction(BuildContext context) {
@@ -53,110 +124,6 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(
           builder: (context) => HistoryScreen(token: widget.token)),
-    );
-  }
-
-  void navigateToProfile(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => ProfileScreen(
-                fullname: widget.fullname,
-                email: widget.email,
-              )),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Ternakami')),
-      body: RefreshIndicator(
-        onRefresh: _refreshData,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Halo ${widget.fullname}!',
-                    style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black)),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () => navigateToPrediction(context),
-                  child: const Text('Predict Animal Eye'),
-                ),
-                const SizedBox(height: 20),
-                FutureBuilder<List<History>?>(
-                  future: _latestPredictions,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return const Center(
-                          child: Text('Error fetching predictions.',
-                              style: TextStyle(color: Colors.red)));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return const Center(
-                          child: Text('Tidak Ada Riwayat Prediksi.',
-                              style: TextStyle(color: Colors.black)));
-                    } else {
-                      final latestPredictions = snapshot.data!.take(3).toList();
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text('Riwayat Prediksi',
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black)),
-                          const SizedBox(height: 10),
-                          ...latestPredictions.map((prediction) {
-                            return Card(
-                              color: Colors.white,
-                              child: ListTile(
-                                leading: Image.network(prediction.imageUrl,
-                                    width: 50, height: 50),
-                                title: Text(prediction.animalName,
-                                    style: const TextStyle(color: Colors.black)),
-                                subtitle: Text(
-                                    'Class: ${prediction.predictionClass}, Probability: ${prediction.predictionProbability}',
-                                    style: const TextStyle(color: Colors.black)),
-                              ),
-                            );
-                          }),
-                          TextButton(
-                            onPressed: () => navigateToHistory(context),
-                            child: const Text('Lihat Selengkapnya',
-                                style: TextStyle(color: Colors.black)),
-                          ),
-                        ],
-                      );
-                    }
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
-        ],
-        onTap: (index) {
-          if (index == 0) {
-            // Stay on Home
-          } else if (index == 1) {
-            navigateToProfile(context);
-          }
-        },
-      ),
     );
   }
 }
