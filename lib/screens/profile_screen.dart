@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ternakami/services/api_service.dart';
 import 'package:ternakami/models/history.dart';
 import 'package:ternakami/screens/history_screen.dart';
+import 'package:ternakami/screens/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String token;
@@ -58,6 +59,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _logout() {
+    // Menghapus data token, fullname, dan email
+    // Menavigasi kembali ke halaman login
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+    );
+
+    // Menampilkan dialog "Telah Logout"
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Telah Logout'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,6 +110,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         color: Colors.grey,
                       ),
                     ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _logout,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Colors.red, // Mengatur warna latar belakang tombol
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              14.0), // Mengatur radius border
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 60,
+                            vertical: 10), // Menambahkan padding kustom
+                        elevation: 5, // Menambahkan elevasi untuk efek bayangan
+                      ),
+                      child: const Text(
+                        'Logout',
+                        style: TextStyle(
+                          color: Colors.white, // Mengatur warna teks
+                          fontSize: 16, // Mengatur ukuran font
+                          fontWeight:
+                              FontWeight.bold, // Mengatur ketebalan font
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -117,11 +159,37 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('Riwayat Prediksi',
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text('Riwayat Prediksi',
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black)),
+                            OutlinedButton(
+                              onPressed: () => _navigateToHistory(context),
+                              style: OutlinedButton.styleFrom(
+                                side: const BorderSide(
+                                    color: Colors.blue,
+                                    width: 1.0), // Menambahkan ukuran outline
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      20), // Membuat border menjadi bulat
+                                ),
+                                minimumSize: const Size(50,
+                                    30), // Menambahkan ukuran tombol (width, height)
+                              ),
+                              child: const Text(
+                                'Lihat Lainnya',
+                                style: TextStyle(
+                                  color: Colors.blue,
+                                  fontSize: 12, // Menambahkan ukuran font
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 10),
                         ...latestPredictions.map((prediction) {
                           return Card(
@@ -167,27 +235,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           );
                         }),
-                        const SizedBox(height: 10),
-                        Center(
-                          child: ElevatedButton(
-                            onPressed: () => _navigateToHistory(context),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.blue,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(30.0),
-                              ),
-                            ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text('Lihat Selengkapnya',
-                                    style: TextStyle(color: Colors.white)),
-                                SizedBox(width: 5),
-                                Icon(Icons.arrow_forward, color: Colors.white),
-                              ],
-                            ),
-                          ),
-                        ),
                       ],
                     );
                   }

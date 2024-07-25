@@ -27,6 +27,19 @@ class HasilPrediksiScreen extends StatelessWidget {
     final buttonFontSize = screenWidth * 0.045;
     final buttonHeight = screenWidth * 0.12;
 
+    List<String> tipsTrikSlides;
+    if (labelPrediksi == 'Mata Terjangkit PinkEye') {
+      tipsTrikSlides = [
+        'Tips & Trik: Jika hewan mengalami pinkeye, segera bersihkan mata dengan air hangat dan hubungi dokter hewan.',
+        'Tips & Trik: Pastikan untuk selalu menjaga kebersihan lingkungan sekitar agar hewan-hewan tetap sehat dan terhindar dari penyakit.'
+      ];
+    } else {
+      tipsTrikSlides = [
+        'Tips & Trik: Pastikan untuk selalu menjaga kebersihan lingkungan sekitar agar hewan-hewan tetap sehat dan terhindar dari penyakit.',
+        'Tips & Trik: Jika hewan mengalami pinkeye, segera bersihkan mata dengan air hangat dan hubungi dokter hewan.'
+      ];
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blue,
@@ -133,28 +146,21 @@ class HasilPrediksiScreen extends StatelessWidget {
                     height: 150,
                     child: PageView(
                       controller: _pageController,
-                      children: [
-                        Padding(
+                      children: tipsTrikSlides.map((text) {
+                        return Padding(
                           padding: const EdgeInsets.all(16.0),
                           child: Text(
-                            'Tips & Trik: Pastikan untuk selalu menjaga kebersihan lingkungan sekitar agar hewan-hewan tetap sehat dan terhindar dari penyakit.',
+                            text,
                             style: GoogleFonts.poppins(fontSize: 16),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Text(
-                            'Tips & Trik: Jika hewan mengalami pinkeye, segera bersihkan mata dengan air hangat dan hubungi dokter hewan.',
-                            style: GoogleFonts.poppins(fontSize: 16),
-                          ),
-                        ),
-                      ],
+                        );
+                      }).toList(),
                     ),
                   ),
                   const SizedBox(height: 8),
                   SmoothPageIndicator(
                     controller: _pageController,
-                    count: 2,
+                    count: tipsTrikSlides.length,
                     effect: const WormEffect(
                       dotHeight: 8,
                       dotWidth: 8,
@@ -180,7 +186,7 @@ class HasilPrediksiScreen extends StatelessWidget {
                 minimumSize: Size(double.infinity, buttonHeight),
               ),
               child: Text(
-                'Kembali ke Home',
+                'Prediksi Ulang',
                 style: GoogleFonts.poppins(
                   fontSize: buttonFontSize,
                   color: Colors.white,
