@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: unused_field, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:ternakami/screens/prediction_screen.dart';
@@ -25,7 +25,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   late PageController _pageController;
-  final List<String> _titles = ['Ternakami', 'Ternakami'];
 
   @override
   void initState() {
@@ -44,33 +43,23 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Color.fromARGB(255, 255, 255, 255),
-        title: AnimatedSwitcher(
-          duration: const Duration(milliseconds: 300),
-          child: Text(
-            _titles[_selectedIndex],
-            key: ValueKey<String>(_titles[_selectedIndex]),
-            style: const TextStyle(color: Colors.black),
-          ),
+      body: SafeArea(
+        child: PageView(
+          controller: _pageController,
+          onPageChanged: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+          },
+          children: [
+            _buildHomeContent(),
+            ProfileScreen(
+              token: widget.token,
+              fullname: widget.fullname,
+              email: widget.email,
+            ),
+          ],
         ),
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-        children: [
-          _buildHomeContent(),
-          ProfileScreen(
-            token: widget.token,
-            fullname: widget.fullname,
-            email: widget.email,
-          ),
-        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
