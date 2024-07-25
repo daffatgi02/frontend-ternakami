@@ -1,9 +1,14 @@
+// lib/screens/home_screen.dart
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:ternakami/models/article.dart';
+import 'package:ternakami/services/article_service.dart';
+import 'package:ternakami/screens/article_detail_screen.dart';
 import 'package:ternakami/screens/prediction_screen.dart';
 import 'package:ternakami/screens/profile_screen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:ternakami/screens/all_articles_screen.dart'; // Import the new screen
 
 class HomeScreen extends StatefulWidget {
   final String token;
@@ -26,11 +31,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
   late PageController _pageController;
+  late Future<List<Article>> _articles;
 
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
+    _articles = ArticleService().fetchArticles();
   }
 
   void _onItemTapped(int index) {
@@ -69,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
         child: CurvedNavigationBar(
           backgroundColor: Colors.transparent,
           color: Colors.blue,
-          height: 60, // Height set to the maximum allowed value
+          height: 60,
           items: const [
             Icon(Icons.home, size: 30, color: Colors.white),
             Icon(Icons.person, size: 30, color: Colors.white),
@@ -82,94 +89,97 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHomeContent() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Holla, ${widget.fullname}!',
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Chek Kambing Kamu Sekarang',
-              style: TextStyle(fontSize: 16, color: Colors.black),
-            ),
-            const SizedBox(height: 20),
-            Center(
-              child: ElevatedButton.icon(
-                onPressed: () => navigateToPrediction(context),
-                icon: const Icon(Icons.camera_alt),
-                label: const Text('Prediksi Kambingmu!'),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 32.0,
-                    vertical: 12.0,
+    return FutureBuilder<List<Article>>(
+      future: _articles,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No articles found'));
+        }
+
+        final articles = snapshot.data!;
+        final articlesToShow = articles.take(3).toList();
+
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Holla, ${widget.fullname}!',
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
                 ),
-              ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Chek Kambing Kamu Sekarang',
+                  style: TextStyle(fontSize: 16, color: Colors.black),
+                ),
+                const SizedBox(height: 20),
+                Center(
+                  child: ElevatedButton.icon(
+                    onPressed: () => navigateToPrediction(context),
+                    icon: const Icon(Icons.camera_alt),
+                    label: const Text('Prediksi Kambingmu!'),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32.0,
+                        vertical: 12.0,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                _buildInterestingArticlesSection(articlesToShow),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            AllArticlesScreen(articles: articles),
+                      ),
+                    );
+                  },
+                  child: const Text('Lihat Selengkapnya'),
+                ),
+              ],
             ),
-            const SizedBox(height: 20),
-            _buildInterestingArticlesSection(),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildInterestingArticlesSection() {
+  Widget _buildInterestingArticlesSection(List<Article> articles) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const Text(
-              'Artikel Menarik',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: const Text('Lihat Semua'),
-            ),
-          ],
+        const Text(
+          'Artikel Menarik',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
         ),
         const SizedBox(height: 10),
-        const SingleChildScrollView(
+        SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Row(
-            children: [
-              _ArticleCard(
-                imageUrl: 'https://via.placeholder.com/150',
-                title: 'Artikel 1',
-                description: 'Deskripsi artikel 1...',
-              ),
-              SizedBox(width: 10),
-              _ArticleCard(
-                imageUrl: 'https://via.placeholder.com/150',
-                title: 'Artikel 2',
-                description: 'Deskripsi artikel 2...',
-              ),
-              SizedBox(width: 10),
-              _ArticleCard(
-                imageUrl: 'https://via.placeholder.com/150',
-                title: 'Artikel 3',
-                description: 'Deskripsi artikel 3...',
-              ),
-            ],
+            children: articles
+                .map((article) => _ArticleCard(article: article))
+                .toList(),
           ),
         ),
       ],
@@ -187,48 +197,53 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _ArticleCard extends StatelessWidget {
-  final String imageUrl;
-  final String title;
-  final String description;
+  final Article article;
 
   const _ArticleCard({
-    required this.imageUrl,
-    required this.title,
-    required this.description,
+    required this.article,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: SizedBox(
-        width: 200,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Image.network(
-              imageUrl,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: 150,
-            ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(description),
-                ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ArticleDetailScreen(article: article),
+          ),
+        );
+      },
+      child: Card(
+        child: SizedBox(
+          width: 200,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Image.network(
+                article.imgUrl,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: 180,
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      article.title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
