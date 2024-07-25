@@ -27,6 +27,7 @@ dependencies:
   intl: ^0.17.0
   google_fonts: ^6.2.1
   easy_image_viewer: ^1.5.1
+  smooth_page_indicator: ^1.2.0+3
 
 
 dev_dependencies:

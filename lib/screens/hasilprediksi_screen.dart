@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
+import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class HasilPrediksiScreen extends StatelessWidget {
   final String animalName;
@@ -9,7 +10,7 @@ class HasilPrediksiScreen extends StatelessWidget {
   final String labelPrediksi;
   final String imageUrl;
 
-  const HasilPrediksiScreen({
+  HasilPrediksiScreen({
     super.key,
     required this.animalName,
     required this.confidence,
@@ -17,17 +18,14 @@ class HasilPrediksiScreen extends StatelessWidget {
     required this.imageUrl,
   });
 
+  final PageController _pageController = PageController();
+
   @override
   Widget build(BuildContext context) {
-    // Mendapatkan ukuran layar
     final screenWidth = MediaQuery.of(context).size.width;
-
-    // Mengatur padding dan font size berdasarkan lebar layar
-    final buttonPadding = screenWidth * 0.04; // Padding 4% dari lebar layar
-    final buttonFontSize =
-        screenWidth * 0.045; // Font size 4.5% dari lebar layar
-    final buttonHeight =
-        screenWidth * 0.12; // Tinggi button 12% dari lebar layar
+    final buttonPadding = screenWidth * 0.04;
+    final buttonFontSize = screenWidth * 0.045;
+    final buttonHeight = screenWidth * 0.12;
 
     return Scaffold(
       appBar: AppBar(
@@ -121,7 +119,54 @@ class HasilPrediksiScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 32), // Tambahkan jarak di atas tombol
+            const SizedBox(height: 16),
+            Card(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.0),
+                side: const BorderSide(color: Colors.white),
+              ),
+              elevation: 4,
+              shadowColor: Colors.black.withOpacity(0.5),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 150,
+                    child: PageView(
+                      controller: _pageController,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            'Tips & Trik: Pastikan untuk selalu menjaga kebersihan lingkungan sekitar agar hewan-hewan tetap sehat dan terhindar dari penyakit.',
+                            style: GoogleFonts.poppins(fontSize: 16),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            'Tips & Trik: Jika hewan mengalami pinkeye, segera bersihkan mata dengan air hangat dan hubungi dokter hewan.',
+                            style: GoogleFonts.poppins(fontSize: 16),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  SmoothPageIndicator(
+                    controller: _pageController,
+                    count: 2,
+                    effect: const WormEffect(
+                      dotHeight: 8,
+                      dotWidth: 8,
+                      activeDotColor: Colors.blue,
+                      dotColor: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
             ElevatedButton(
               onPressed: () {
                 Navigator.of(context).pop();
@@ -132,8 +177,7 @@ class HasilPrediksiScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12.0),
                 ),
                 backgroundColor: Colors.blue,
-                minimumSize: Size(
-                    double.infinity, buttonHeight), // Mengatur tinggi button
+                minimumSize: Size(double.infinity, buttonHeight),
               ),
               child: Text(
                 'Kembali ke Home',
@@ -143,7 +187,7 @@ class HasilPrediksiScreen extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 16), // Tambahkan jarak di bawah tombol
+            const SizedBox(height: 16),
           ],
         ),
       ),
