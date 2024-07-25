@@ -258,7 +258,7 @@ class _PredictionScreenState extends State<PredictionScreen>
         _selectedType == null ||
         _animalNameController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Please fill all fields")),
+        const SnackBar(content: Text("Tolong isi semua data!")),
       );
       return;
     }
@@ -275,8 +275,12 @@ class _PredictionScreenState extends State<PredictionScreen>
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) =>
-              HasilPrediksiScreen(predictionResult: predictionResult),
+          builder: (context) => HasilPrediksiScreen(
+            animalName: predictionResult['Animal_Name'],
+            confidence: predictionResult['confidence'].toDouble(),
+            labelPrediksi: predictionResult['label_prediksi'],
+            imageUrl: predictionResult['image_url'],
+          ),
         ),
       );
     } else {

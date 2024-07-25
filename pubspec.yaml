@@ -25,6 +25,8 @@ dependencies:
   curved_navigation_bar: ^1.0.6
   introduction_screen: ^3.1.14
   intl: ^0.17.0
+  google_fonts: ^6.2.1
+  easy_image_viewer: ^1.5.1
 
 
 dev_dependencies:
