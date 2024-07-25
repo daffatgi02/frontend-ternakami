@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
 import 'package:ternakami/screens/register_screen.dart';
@@ -17,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   final ApiService apiService = ApiService();
   bool rememberMe = false;
+  bool _obscurePassword = true;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -78,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Center(
                 child: Image.asset(
                   'assets/gambar/login_image.png', // Replace with your image asset
-                  height: 200,
+                  height: 250,
                 ),
               ),
             ),
@@ -103,6 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: emailController,
                       decoration: InputDecoration(
                         labelText: 'Email',
+                        prefixIcon: const Icon(Icons.email),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -122,11 +124,24 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: passwordController,
                       decoration: InputDecoration(
                         labelText: 'Password',
+                        prefixIcon: const Icon(Icons.lock),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      obscureText: true,
+                      obscureText: _obscurePassword,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Kata Sandi harus diisi';

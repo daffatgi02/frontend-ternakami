@@ -23,6 +23,7 @@ dependencies:
   logging: 1.2.0
   http_parser: ^4.0.2
   curved_navigation_bar: ^1.0.6
+  introduction_screen: ^3.1.14
 
 dev_dependencies:
   flutter_test:

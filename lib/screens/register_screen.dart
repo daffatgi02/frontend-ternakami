@@ -13,10 +13,14 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
   final TextEditingController fullnameController = TextEditingController();
   final ApiService apiService = ApiService();
 
   final _formKey = GlobalKey<FormState>();
+  bool _obscurePassword = true;
+  bool _obscureConfirmPassword = true;
 
   void register() async {
     if (_formKey.currentState?.validate() ?? false) {
@@ -66,6 +70,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
+  bool isValidEmail(String email) {
+    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+  }
+
+  bool isValidPassword(String password) {
+    return password.length >= 6;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -84,7 +96,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Center(
                 child: Image.asset(
                   'assets/gambar/regis.png', // Replace with your image asset
-                  height: 200,
+                  height: 250,
                 ),
               ),
             ),
@@ -109,6 +121,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       controller: emailController,
                       decoration: InputDecoration(
                         labelText: 'Email',
+                        prefixIcon: const Icon(Icons.email),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -117,9 +130,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         if (value == null || value.isEmpty) {
                           return 'Email harus diisi';
                         }
-                        final emailRegex =
-                            RegExp(r'^[a-zA-Z0-9]+@[a-zA-Z0-9]+\.[a-zA-Z]+');
-                        if (!emailRegex.hasMatch(value)) {
+                        if (!isValidEmail(value)) {
                           return 'Format email tidak valid';
                         }
                         return null;
@@ -130,6 +141,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       controller: fullnameController,
                       decoration: InputDecoration(
                         labelText: 'Nama Lengkap',
+                        prefixIcon: const Icon(Icons.person),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -146,17 +158,64 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       controller: passwordController,
                       decoration: InputDecoration(
                         labelText: 'Kata Sandi',
+                        prefixIcon: const Icon(Icons.lock),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
                       ),
-                      obscureText: true,
+                      obscureText: _obscurePassword,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Kata Sandi harus diisi';
                         }
-                        if (value.length < 6) {
+                        if (!isValidPassword(value)) {
                           return 'Kata Sandi harus minimal 6 karakter';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: confirmPasswordController,
+                      decoration: InputDecoration(
+                        labelText: 'Konfirmasi Kata Sandi',
+                        prefixIcon: const Icon(Icons.lock),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscureConfirmPassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscureConfirmPassword =
+                                  !_obscureConfirmPassword;
+                            });
+                          },
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                      ),
+                      obscureText: _obscureConfirmPassword,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Konfirmasi Kata Sandi harus diisi';
+                        }
+                        if (value != passwordController.text) {
+                          return 'Kata Sandi tidak cocok';
                         }
                         return null;
                       },

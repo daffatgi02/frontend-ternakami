@@ -13,6 +13,8 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         primaryColor: Colors.blue,
+        primarySwatch: Colors.blue,
+        scaffoldBackgroundColor: Colors.white,
         buttonTheme: const ButtonThemeData(
           buttonColor: Colors.blue,
           textTheme: ButtonTextTheme.primary,
