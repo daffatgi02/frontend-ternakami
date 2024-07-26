@@ -5,6 +5,7 @@ import 'package:ternakami/services/api_service.dart';
 import 'package:ternakami/models/history.dart';
 import 'package:ternakami/screens/history_screen.dart';
 import 'package:ternakami/screens/login_screen.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String token;
@@ -97,15 +98,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 10),
                     Text(
                       widget.fullname,
-                      style: const TextStyle(
+                      style: GoogleFonts.poppins(
                         fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                     const SizedBox(height: 5),
                     Text(
                       widget.email,
-                      style: const TextStyle(
+                      style: GoogleFonts.poppins(
                         fontSize: 16,
                         color: Colors.grey,
                       ),
@@ -125,13 +126,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             vertical: 10), // Menambahkan padding kustom
                         elevation: 5, // Menambahkan elevasi untuk efek bayangan
                       ),
-                      child: const Text(
-                        'Logout',
-                        style: TextStyle(
+                      child: Text(
+                        'Keluar Aplikasi',
+                        style: GoogleFonts.poppins(
                           color: Colors.white, // Mengatur warna teks
                           fontSize: 16, // Mengatur ukuran font
                           fontWeight:
-                              FontWeight.bold, // Mengatur ketebalan font
+                              FontWeight.w500, // Mengatur ketebalan font
                         ),
                       ),
                     ),
@@ -147,13 +148,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return const Center(
+                    return Center(
                         child: Text('Tidak Ada Riwayat Prediksi.',
-                            style: TextStyle(color: Colors.black)));
+                            style: GoogleFonts.poppins(color: Colors.black)));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(
+                    return Center(
                         child: Text('Tidak Ada Riwayat Prediksi.',
-                            style: TextStyle(color: Colors.black)));
+                            style: GoogleFonts.poppins(color: Colors.black)));
                   } else {
                     final latestPredictions = snapshot.data!.take(3).toList();
                     return Column(
@@ -162,10 +163,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text('Riwayat Prediksi',
-                                style: TextStyle(
+                            Text('Riwayat Prediksi',
+                                style: GoogleFonts.poppins(
                                     fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w500,
                                     color: Colors.black)),
                             OutlinedButton(
                               onPressed: () => _navigateToHistory(context),
@@ -178,12 +179,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       20), // Membuat border menjadi bulat
                                 ),
                                 minimumSize: const Size(50,
-                                    30), // Menambahkan ukuran tombol (width, height)
+                                    27), // Menambahkan ukuran tombol (width, height)
                               ),
-                              child: const Text(
+                              child: Text(
                                 'Lihat Lainnya',
-                                style: TextStyle(
+                                style: GoogleFonts.poppins(
                                   color: Colors.blue,
+                                  fontWeight: FontWeight.w500,
                                   fontSize: 12, // Menambahkan ukuran font
                                 ),
                               ),
@@ -203,13 +205,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               title: RichText(
                                 text: TextSpan(
                                   text: 'Nama: ',
-                                  style: const TextStyle(
+                                  style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black),
                                   children: [
                                     TextSpan(
                                       text: prediction.animalName,
-                                      style: const TextStyle(
+                                      style: GoogleFonts.poppins(
                                           fontWeight: FontWeight.normal,
                                           color: Colors.black),
                                     ),
@@ -219,13 +221,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               subtitle: RichText(
                                 text: TextSpan(
                                   text: 'Kondisi: ',
-                                  style: const TextStyle(
+                                  style: GoogleFonts.poppins(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black),
                                   children: [
                                     TextSpan(
                                       text: prediction.predictionClass,
-                                      style: const TextStyle(
+                                      style: GoogleFonts.poppins(
                                           fontWeight: FontWeight.normal,
                                           color: Colors.black),
                                     ),

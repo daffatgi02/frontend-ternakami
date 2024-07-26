@@ -8,6 +8,7 @@ import 'package:ternakami/screens/prediction_screen.dart';
 import 'package:ternakami/screens/profile_screen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:ternakami/screens/all_articles_screen.dart'; // Import the new screen
+import 'package:google_fonts/google_fonts.dart';
 
 class HomeScreen extends StatefulWidget {
   final String token;
@@ -127,25 +128,30 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Holla, ${widget.fullname}!',
-                  style: const TextStyle(
-                    fontSize: 24,
+                  'Hallo!',
+                  style: GoogleFonts.poppins(
+                    fontSize: 28,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
                 ),
-                const SizedBox(height: 10),
-                const Text(
-                  'Check Kambing Kamu Sekarang',
-                  style: TextStyle(fontSize: 16, color: Colors.black),
+                Text(
+                  widget.fullname,
+                  style: GoogleFonts.poppins(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w300,
+                    color: Colors.black,
+                  ),
                 ),
                 const SizedBox(height: 20),
                 Center(
                   child: ElevatedButton.icon(
                     onPressed: () => navigateToPrediction(context),
-                    icon: const Icon(Icons.camera_alt),
                     label: const Text('Prediksi Kambingmu!'),
+                    icon: const Icon(Icons.camera_alt),
                     style: ElevatedButton.styleFrom(
+                      textStyle:
+                          GoogleFonts.poppins(fontWeight: FontWeight.w500),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30.0),
                       ),
@@ -174,11 +180,11 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               'Artikel Menarik',
-              style: TextStyle(
+              style: GoogleFonts.poppins(
                 fontSize: 18,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w500,
                 color: Colors.black,
               ),
             ),
@@ -200,11 +206,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 minimumSize: const Size(
-                    50, 30), // Menambahkan ukuran tombol (width, height)
+                    50, 27), // Menambahkan ukuran tombol (width, height)
               ),
-              child: const Text(
+              child: Text(
                 'Lihat Semua',
-                style: TextStyle(
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w500,
                   color: Colors.blue,
                   fontSize: 12, // Menambahkan fontSize
                 ),
@@ -294,16 +301,16 @@ class _ArticleCard extends StatelessWidget {
                   article.imgUrl,
                   fit: BoxFit.cover,
                   width: double.infinity,
-                  height: 190,
+                  height: 170,
                 ),
               ),
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Text(
                   article.title,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
+                  style: GoogleFonts.poppins(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),
                 ),
