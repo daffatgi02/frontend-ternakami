@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:intl/intl.dart'; // Tambahkan paket intl untuk memformat tanggal
 import 'package:ternakami/models/history.dart';
 
 class HistoryDetailScreen extends StatelessWidget {
@@ -31,6 +32,10 @@ class HistoryDetailScreen extends StatelessWidget {
         'Tips & Trik: Jika hewan mengalami pinkeye, segera bersihkan mata dengan air hangat dan hubungi dokter hewan.'
       ];
     }
+
+    // Format tanggal untuk hanya menampilkan tanggal tanpa waktu
+    final formattedDate = DateFormat('yyyy-MM-dd')
+        .format(DateTime.parse(history.formattedCreatedAt));
 
     return Scaffold(
       body: CustomScrollView(
@@ -150,6 +155,14 @@ class HistoryDetailScreen extends StatelessWidget {
                                     style: GoogleFonts.poppins(
                                       fontSize: 48,
                                       fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    'Tanggal Prediksi: $formattedDate',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 16,
                                       color: Colors.white,
                                     ),
                                   ),

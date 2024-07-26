@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:ternakami/services/api_service.dart';
 import 'package:ternakami/models/history.dart';
 import 'package:ternakami/screens/history_screen.dart';
+import 'package:ternakami/screens/history_detail_screen.dart'; // Import layar detail
 import 'package:ternakami/screens/login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -76,174 +77,189 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _navigateToDetail(BuildContext context, History history) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HistoryDetailScreen(history: history),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: RefreshIndicator(
         onRefresh: _refreshData,
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Column(
-                  children: [
-                    const CircleAvatar(
-                      radius: 50,
-                      backgroundImage: AssetImage('assets/gambar/logo.png'),
+        child: Column(
+          children: [
+            // Bagian yang tidak dapat di-scroll
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  const CircleAvatar(
+                    radius: 50,
+                    backgroundImage: AssetImage('assets/gambar/logo.png'),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    widget.fullname,
+                    style: GoogleFonts.poppins(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
                     ),
-                    const SizedBox(height: 10),
-                    Text(
-                      widget.fullname,
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    widget.email,
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _logout,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor:
+                          Colors.red, // Mengatur warna latar belakang tombol
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            14.0), // Mengatur radius border
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 60,
+                          vertical: 10), // Menambahkan padding kustom
+                      elevation: 5, // Menambahkan elevasi untuk efek bayangan
+                    ),
+                    child: Text(
+                      'Keluar Aplikasi',
                       style: GoogleFonts.poppins(
-                        fontSize: 24,
-                        fontWeight: FontWeight.w400,
+                        color: Colors.white, // Mengatur warna teks
+                        fontSize: 16, // Mengatur ukuran font
+                        fontWeight: FontWeight.w500, // Mengatur ketebalan font
                       ),
                     ),
-                    const SizedBox(height: 5),
-                    Text(
-                      widget.email,
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _logout,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Colors.red, // Mengatur warna latar belakang tombol
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                              14.0), // Mengatur radius border
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 60,
-                            vertical: 10), // Menambahkan padding kustom
-                        elevation: 5, // Menambahkan elevasi untuk efek bayangan
-                      ),
-                      child: Text(
-                        'Keluar Aplikasi',
-                        style: GoogleFonts.poppins(
-                          color: Colors.white, // Mengatur warna teks
-                          fontSize: 16, // Mengatur ukuran font
-                          fontWeight:
-                              FontWeight.w500, // Mengatur ketebalan font
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
+                ],
+              ),
+            ),
+            const Divider(),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(16.0),
+                child: FutureBuilder<List<History>?>(
+                  future: _latestPredictions,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(
+                          child: Text('Tidak Ada Riwayat Prediksi.',
+                              style: GoogleFonts.poppins(color: Colors.black)));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(
+                          child: Text('Tidak Ada Riwayat Prediksi.',
+                              style: GoogleFonts.poppins(color: Colors.black)));
+                    } else {
+                      final latestPredictions = snapshot.data!.take(3).toList();
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text('Prediksi Terbaru',
+                                  style: GoogleFonts.poppins(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black)),
+                              OutlinedButton(
+                                onPressed: () => _navigateToHistory(context),
+                                style: OutlinedButton.styleFrom(
+                                  side: const BorderSide(
+                                      color: Colors.blue,
+                                      width: 1.0), // Menambahkan ukuran outline
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        20), // Membuat border menjadi bulat
+                                  ),
+                                  minimumSize: const Size(50,
+                                      27), // Menambahkan ukuran tombol (width, height)
+                                ),
+                                child: Text(
+                                  'Lihat Riwayat Lainnya',
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.blue,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 12, // Menambahkan ukuran font
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+                          ...latestPredictions.map((prediction) {
+                            return Card(
+                              color: Colors.white,
+                              child: InkWell(
+                                onTap: () =>
+                                    _navigateToDetail(context, prediction),
+                                child: ListTile(
+                                  leading: ClipRRect(
+                                    borderRadius: BorderRadius.circular(25.0),
+                                    child: Image.network(prediction.imageUrl,
+                                        width: 50,
+                                        height: 50,
+                                        fit: BoxFit.cover),
+                                  ),
+                                  title: RichText(
+                                    text: TextSpan(
+                                      text: 'Nama: ',
+                                      style: GoogleFonts.poppins(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black),
+                                      children: [
+                                        TextSpan(
+                                          text: prediction.animalName,
+                                          style: GoogleFonts.poppins(
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.black),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  subtitle: RichText(
+                                    text: TextSpan(
+                                      text: 'Kondisi: ',
+                                      style: GoogleFonts.poppins(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black),
+                                      children: [
+                                        TextSpan(
+                                          text: prediction.predictionClass,
+                                          style: GoogleFonts.poppins(
+                                              fontWeight: FontWeight.normal,
+                                              color: Colors.black),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                        ],
+                      );
+                    }
+                  },
                 ),
               ),
-              const SizedBox(height: 20),
-              const Divider(),
-              const SizedBox(height: 20),
-              FutureBuilder<List<History>?>(
-                future: _latestPredictions,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (snapshot.hasError) {
-                    return Center(
-                        child: Text('Tidak Ada Riwayat Prediksi.',
-                            style: GoogleFonts.poppins(color: Colors.black)));
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return Center(
-                        child: Text('Tidak Ada Riwayat Prediksi.',
-                            style: GoogleFonts.poppins(color: Colors.black)));
-                  } else {
-                    final latestPredictions = snapshot.data!.take(3).toList();
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Riwayat Prediksi',
-                                style: GoogleFonts.poppins(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black)),
-                            OutlinedButton(
-                              onPressed: () => _navigateToHistory(context),
-                              style: OutlinedButton.styleFrom(
-                                side: const BorderSide(
-                                    color: Colors.blue,
-                                    width: 1.0), // Menambahkan ukuran outline
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      20), // Membuat border menjadi bulat
-                                ),
-                                minimumSize: const Size(50,
-                                    27), // Menambahkan ukuran tombol (width, height)
-                              ),
-                              child: Text(
-                                'Lihat Lainnya',
-                                style: GoogleFonts.poppins(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12, // Menambahkan ukuran font
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        ...latestPredictions.map((prediction) {
-                          return Card(
-                            color: Colors.white,
-                            child: ListTile(
-                              leading: ClipRRect(
-                                borderRadius: BorderRadius.circular(25.0),
-                                child: Image.network(prediction.imageUrl,
-                                    width: 50, height: 50, fit: BoxFit.cover),
-                              ),
-                              title: RichText(
-                                text: TextSpan(
-                                  text: 'Nama: ',
-                                  style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
-                                  children: [
-                                    TextSpan(
-                                      text: prediction.animalName,
-                                      style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.normal,
-                                          color: Colors.black),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              subtitle: RichText(
-                                text: TextSpan(
-                                  text: 'Kondisi: ',
-                                  style: GoogleFonts.poppins(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
-                                  children: [
-                                    TextSpan(
-                                      text: prediction.predictionClass,
-                                      style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.normal,
-                                          color: Colors.black),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                      ],
-                    );
-                  }
-                },
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
