@@ -109,8 +109,8 @@ class _AllArticlesScreenState extends State<AllArticlesScreen> {
                     title: Text(
                       article.title,
                       style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w900,
                         color: Colors.black,
                       ),
                     ),
