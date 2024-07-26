@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:ternakami/models/history.dart';
 import 'package:ternakami/services/api_service.dart';
+import 'package:ternakami/screens/history_detail_screen.dart';
 
 class HistoryScreen extends StatefulWidget {
   final String token;
@@ -73,140 +74,107 @@ class _HistoryScreenState extends State<HistoryScreen> {
       backgroundColor: Colors.white,
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : CustomScrollView(
-              slivers: [
-                SliverPersistentHeader(
-                  delegate: SliverSearchAppBar(
-                    _searchController,
-                    _selectedFilter,
-                    (filter) {
-                      setState(() {
-                        _selectedFilter = filter;
-                        _filterHistory();
-                      });
-                    },
+          : RefreshIndicator(
+              onRefresh: _fetchHistory,
+              child: CustomScrollView(
+                slivers: [
+                  SliverPersistentHeader(
+                    delegate: SliverSearchAppBar(
+                      _searchController,
+                      _selectedFilter,
+                      (filter) {
+                        setState(() {
+                          _selectedFilter = filter;
+                          _filterHistory();
+                        });
+                      },
+                    ),
+                    pinned: true,
                   ),
-                  pinned: true,
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.all(8.0),
-                  sliver: _filteredHistory.isEmpty
-                      ? const SliverFillRemaining(
-                          child: Center(
-                            child: Text('Tidak ditemukan riwayat prediksi.',
-                                style: TextStyle(color: Colors.black)),
-                          ),
-                        )
-                      : SliverGrid(
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 0.75,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                          ),
-                          delegate: SliverChildBuilderDelegate(
-                            (BuildContext context, int index) {
-                              final history = _filteredHistory[index];
-                              return AnimatedContainer(
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeInOut,
-                                child: Card(
-                                  color: Colors.blue[50],
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  elevation: 4,
-                                  child: InkWell(
-                                    onTap: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) => AlertDialog(
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
+                  SliverPadding(
+                    padding: const EdgeInsets.all(8.0),
+                    sliver: _filteredHistory.isEmpty
+                        ? const SliverFillRemaining(
+                            child: Center(
+                              child: Text('Tidak ditemukan riwayat prediksi.',
+                                  style: TextStyle(color: Colors.black)),
+                            ),
+                          )
+                        : SliverGrid(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 0.75,
+                              crossAxisSpacing: 10,
+                              mainAxisSpacing: 10,
+                            ),
+                            delegate: SliverChildBuilderDelegate(
+                              (BuildContext context, int index) {
+                                final history = _filteredHistory[index];
+                                return AnimatedContainer(
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                  child: Card(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    elevation: 4,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                HistoryDetailScreen(
+                                                    history: history),
                                           ),
-                                          content: Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                child: Image.network(
-                                                  history.imageUrl,
-                                                  fit: BoxFit.cover,
-                                                ),
+                                        );
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(10),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              child: Image.network(
+                                                history.imageUrl,
+                                                width: double.infinity,
+                                                height: 120,
+                                                fit: BoxFit.cover,
                                               ),
-                                              const SizedBox(height: 8),
-                                              Text(
-                                                'Nama Hewan: ${history.animalName}',
-                                                style: const TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                  color: Colors.black,
-                                                ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              history.predictionClass,
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                                color: Colors.black,
                                               ),
-                                              Text(
-                                                'Prediksi: ${history.predictionClass}',
-                                                style: TextStyle(
-                                                  color: Colors.grey[700],
-                                                ),
+                                            ),
+                                            Text(
+                                              'Nama: ${history.animalName}',
+                                              style: TextStyle(
+                                                color: Colors.grey[700],
                                               ),
-                                              Text(
-                                                'Tanggal Prediksi: ${history.formattedCreatedAt}',
-                                                style: TextStyle(
-                                                  color: Colors.grey[600],
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
-                                      );
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            child: Image.network(
-                                              history.imageUrl,
-                                              width: double.infinity,
-                                              height: 190,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            history.predictionClass,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 16,
-                                              color: Colors.black,
-                                            ),
-                                          ),
-                                          Text(
-                                            'Nama: ${history.animalName}',
-                                            style: TextStyle(
-                                              color: Colors.grey[700],
-                                            ),
-                                          ),
-                                        ],
                                       ),
                                     ),
                                   ),
-                                ),
-                              );
-                            },
-                            childCount: _filteredHistory.length,
+                                );
+                              },
+                              childCount: _filteredHistory.length,
+                            ),
                           ),
-                        ),
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
     );
   }
