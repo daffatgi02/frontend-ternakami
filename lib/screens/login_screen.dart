@@ -1,6 +1,7 @@
-// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ternakami/screens/register_screen.dart';
 import 'package:ternakami/services/api_service.dart';
 import 'home_screen.dart';
@@ -21,6 +22,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
+  String? emailError;
+  String? passwordError;
+
   void login() async {
     if (_formKey.currentState?.validate() ?? false) {
       final email = emailController.text;
@@ -35,11 +39,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     token: result.token,
                     fullname: result.fullname,
                     userid: result.userid,
-                    email: result.email, // Pass email here
+                    email: result.email,
                   )),
         );
       } else {
-        showErrorSnackBar("Kata Sandi Salah atau Akun tidak ditemukan!");
+        setState(() {
+          emailError = 'Email Salah atau Akun tidak ditemukan!';
+          passwordError = 'Kata Sandi Salah atau Akun tidak ditemukan!';
+        });
       }
     }
   }
@@ -47,7 +54,10 @@ class _LoginScreenState extends State<LoginScreen> {
   void showErrorSnackBar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(
+          message,
+          style: GoogleFonts.poppins(),
+        ),
         backgroundColor: Colors.red,
       ),
     );
@@ -91,10 +101,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Text(
+                    Text(
                       'Masuk ke Akun anda',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -104,10 +114,12 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: emailController,
                       decoration: InputDecoration(
                         labelText: 'Email',
+                        labelStyle: GoogleFonts.poppins(),
                         prefixIcon: const Icon(Icons.email),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
+                        errorText: emailError, // Display error text if present
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -116,14 +128,21 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (!isValidEmail(value)) {
                           return 'Format email tidak valid';
                         }
-                        return null;
+                        return null; // Reset error message if input is correct
                       },
+                      onChanged: (value) {
+                        setState(() {
+                          emailError = null;
+                        });
+                      },
+                      style: GoogleFonts.poppins(),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 15),
                     TextFormField(
                       controller: passwordController,
                       decoration: InputDecoration(
                         labelText: 'Password',
+                        labelStyle: GoogleFonts.poppins(),
                         prefixIcon: const Icon(Icons.lock),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -140,6 +159,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
+                        errorText:
+                            passwordError, // Display error text if present
                       ),
                       obscureText: _obscurePassword,
                       validator: (value) {
@@ -149,8 +170,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         if (!isValidPassword(value)) {
                           return 'Kata Sandi harus minimal 6 karakter';
                         }
-                        return null;
+                        return null; // Reset error message if input is correct
                       },
+                      onChanged: (value) {
+                        setState(() {
+                          passwordError = null;
+                        });
+                      },
+                      style: GoogleFonts.poppins(),
                     ),
                     const SizedBox(height: 10),
                     Row(
@@ -166,16 +193,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                 });
                               },
                             ),
-                            const Text('Ingat Saya'),
+                            Text(
+                              'Ingat Saya',
+                              style: GoogleFonts.poppins(),
+                            ),
                           ],
                         ),
                         TextButton(
                           onPressed: () {
                             // Implement forgot password functionality
                           },
-                          child: const Text(
+                          child: Text(
                             'Lupa Password?',
-                            style: TextStyle(color: Colors.blue),
+                            style: GoogleFonts.poppins(color: Colors.blue),
                           ),
                         ),
                       ],
@@ -190,9 +220,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Masuk',
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                           fontSize: 18,
                           color: Colors.white, // Menambahkan warna putih
                         ),
@@ -207,8 +237,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               builder: (context) => const RegisterScreen()),
                         );
                       },
-                      child: const Text('Belum punya akun? Daftar di sini',
-                          style: TextStyle(color: Colors.blue)),
+                      child: Text(
+                        'Belum punya akun? Daftar di sini',
+                        style: GoogleFonts.poppins(color: Colors.blue),
+                      ),
                     ),
                   ],
                 ),

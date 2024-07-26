@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ternakami/services/api_service.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -108,10 +109,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    const Text(
+                    Text(
                       'Buat Akun Baru!',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: GoogleFonts.poppins(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
@@ -121,6 +122,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       controller: emailController,
                       decoration: InputDecoration(
                         labelText: 'Email',
+                        labelStyle: GoogleFonts.poppins(),
                         prefixIcon: const Icon(Icons.email),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -135,12 +137,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         }
                         return null;
                       },
+                      style: GoogleFonts.poppins(),
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: fullnameController,
                       decoration: InputDecoration(
                         labelText: 'Nama Lengkap',
+                        labelStyle: GoogleFonts.poppins(),
                         prefixIcon: const Icon(Icons.person),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -152,12 +156,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         }
                         return null;
                       },
+                      style: GoogleFonts.poppins(),
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: passwordController,
                       decoration: InputDecoration(
                         labelText: 'Kata Sandi',
+                        labelStyle: GoogleFonts.poppins(),
                         prefixIcon: const Icon(Icons.lock),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -185,12 +191,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         }
                         return null;
                       },
+                      style: GoogleFonts.poppins(),
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: confirmPasswordController,
                       decoration: InputDecoration(
                         labelText: 'Konfirmasi Kata Sandi',
+                        labelStyle: GoogleFonts.poppins(),
                         prefixIcon: const Icon(Icons.lock),
                         suffixIcon: IconButton(
                           icon: Icon(
@@ -219,6 +227,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         }
                         return null;
                       },
+                      style: GoogleFonts.poppins(),
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton(
@@ -230,9 +239,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: const Text(
+                      child: Text(
                         'Daftar',
-                        style: TextStyle(
+                        style: GoogleFonts.poppins(
                           fontSize: 18,
                           color: Colors.white,
                         ),
@@ -243,8 +252,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       onPressed: () {
                         Navigator.pop(context);
                       },
-                      child: const Text('Sudah memiliki akun? Masuk di sini.',
-                          style: TextStyle(color: Colors.blue)),
+                      child: Text(
+                        'Sudah memiliki akun? Masuk di sini.',
+                        style: GoogleFonts.poppins(color: Colors.blue),
+                      ),
                     ),
                     // Debug button for testing success dialog
                     const SizedBox(height: 20),

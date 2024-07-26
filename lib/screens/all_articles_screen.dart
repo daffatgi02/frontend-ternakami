@@ -70,6 +70,7 @@ class _AllArticlesScreenState extends State<AllArticlesScreen> {
               ),
             ),
             backgroundColor: Colors.blue,
+            iconTheme: const IconThemeData(color: Colors.white),
             actions: const [
               AppBarSearchButton(),
             ],
