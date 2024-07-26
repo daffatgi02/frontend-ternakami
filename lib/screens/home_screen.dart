@@ -2,6 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:ternakami/models/article.dart';
+import 'package:ternakami/models/history.dart';
+import 'package:ternakami/screens/history_detail_screen.dart';
+import 'package:ternakami/screens/history_screen.dart';
+import 'package:ternakami/services/api_service.dart';
 import 'package:ternakami/services/article_service.dart';
 import 'package:ternakami/screens/article_detail_screen.dart';
 import 'package:ternakami/screens/prediction_screen.dart';
@@ -57,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            _buildAppBar(),
+            // Removed the AppBar here
             Expanded(
               child: PageView(
                 controller: _pageController,
@@ -96,16 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildAppBar() {
-    return ClipPath(
-      clipper: CustomAppBarClipper(),
-      child: Container(
-        height: 130,
-        color: Colors.blue,
-        alignment: Alignment.center,
-      ),
-    );
-  }
+  // Removed _buildAppBar method here
 
   Widget _buildHomeContent() {
     return FutureBuilder<List<Article>>(
@@ -164,12 +159,130 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 const SizedBox(height: 20),
+                _buildLatestPredictionsSection(), // Added Latest Predictions Section
                 _buildInterestingArticlesSection(articlesToShow, articles),
               ],
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _buildLatestPredictionsSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Prediksi Terakhir',
+              style: GoogleFonts.poppins(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ),
+            ),
+            OutlinedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => HistoryScreen(token: widget.token),
+                  ),
+                );
+              },
+              style: OutlinedButton.styleFrom(
+                side: const BorderSide(color: Colors.blue, width: 1.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                minimumSize: const Size(50, 27),
+              ),
+              child: Text(
+                'Lihat Lainnya',
+                style: GoogleFonts.poppins(
+                  fontWeight: FontWeight.w500,
+                  color: Colors.blue,
+                  fontSize: 12,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        FutureBuilder<List<History>?>(
+          future: ApiService().getHistory(widget.token),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(
+                  child: Text('Tidak Ada Riwayat Prediksi.',
+                      style: GoogleFonts.poppins(color: Colors.black)));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(
+                  child: Text('Tidak Ada Riwayat Prediksi.',
+                      style: GoogleFonts.poppins(color: Colors.black)));
+            } else {
+              final latestPredictions = snapshot.data!.take(2).toList();
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  ...latestPredictions.map((prediction) {
+                    return Card(
+                      color: Colors.white,
+                      child: InkWell(
+                        onTap: () => _navigateToDetail(context, prediction),
+                        child: ListTile(
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(25.0),
+                            child: Image.network(prediction.imageUrl,
+                                width: 50, height: 50, fit: BoxFit.cover),
+                          ),
+                          title: RichText(
+                            text: TextSpan(
+                              text: 'Nama: ',
+                              style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black),
+                              children: [
+                                TextSpan(
+                                  text: prediction.animalName,
+                                  style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                          subtitle: RichText(
+                            text: TextSpan(
+                              text: 'Kondisi: ',
+                              style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black),
+                              children: [
+                                TextSpan(
+                                  text: prediction.predictionClass,
+                                  style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.normal,
+                                      color: Colors.black),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ],
+              );
+            }
+          },
+        ),
+      ],
     );
   }
 
@@ -241,27 +354,14 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
 
-class CustomAppBarClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    path.lineTo(0, size.height - 50);
-    path.quadraticBezierTo(
-      size.width / 2,
-      size.height,
-      size.width,
-      size.height - 50,
+  void _navigateToDetail(BuildContext context, History history) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HistoryDetailScreen(history: history),
+      ),
     );
-    path.lineTo(size.width, 0);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) {
-    return false;
   }
 }
 

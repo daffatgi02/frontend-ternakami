@@ -1,10 +1,6 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:ternakami/services/api_service.dart';
-import 'package:ternakami/models/history.dart';
-import 'package:ternakami/screens/history_screen.dart';
-import 'package:ternakami/screens/history_detail_screen.dart'; // Import layar detail
 import 'package:ternakami/screens/login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,46 +22,9 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late Future<List<History>?> _latestPredictions;
-
-  @override
-  void initState() {
-    super.initState();
-    _latestPredictions = ApiService().getHistory(widget.token).then((history) {
-      if (history != null) {
-        history.sort(
-            (a, b) => b.formattedCreatedAt.compareTo(a.formattedCreatedAt));
-      }
-      return history;
-    });
-  }
-
-  Future<void> _refreshData() async {
-    setState(() {
-      _latestPredictions =
-          ApiService().getHistory(widget.token).then((history) {
-        if (history != null) {
-          history.sort(
-              (a, b) => b.formattedCreatedAt.compareTo(a.formattedCreatedAt));
-        }
-        return history;
-      });
-    });
-  }
-
-  void _navigateToHistory(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HistoryScreen(token: widget.token),
-      ),
-    );
-  }
-
   Future<void> _logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    // Hapus hanya kunci yang terkait dengan login
     await prefs.remove('token');
     await prefs.remove('fullname');
     await prefs.remove('email');
@@ -86,15 +45,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _navigateToDetail(BuildContext context, History history) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HistoryDetailScreen(history: history),
-      ),
-    );
-  }
-
   void _showFullImage(BuildContext context) {
     showDialog(
       context: context,
@@ -109,7 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   height: MediaQuery.of(context).size.height * 0.7,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    image: DecorationImage(
+                    image: const DecorationImage(
                       image: AssetImage('assets/gambar/profil.png'),
                       fit: BoxFit.cover,
                     ),
@@ -120,7 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 top: 20,
                 right: 20,
                 child: IconButton(
-                  icon: Icon(Icons.close, color: Colors.white),
+                  icon: const Icon(Icons.close, color: Colors.white),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -133,12 +83,62 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _buildMenuItem(String title, {VoidCallback? onTap}) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+            color: const Color.fromARGB(255, 144, 144, 144),
+            width: 1), // Border hitam tipis
+        borderRadius:
+            BorderRadius.circular(10), // Opsional: menambahkan radius border
+      ),
+      child: ListTile(
+        title: Text(
+          title,
+          style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400),
+        ),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        onTap: onTap,
+      ),
+    );
+  }
+
+  Widget _menuLogout(String title, {VoidCallback? onTap}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.redAccent, // Background merah
+        border: Border.all(
+            color: Color.fromARGB(255, 255, 255, 255),
+            width: 1), // Border hitam tipis
+        borderRadius: BorderRadius.circular(10), // Radius border
+      ),
+      child: ListTile(
+        title: Text(
+          title,
+          style: GoogleFonts.poppins(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.white, // Text putih
+          ),
+        ),
+        trailing: const Icon(Icons.arrow_forward_ios,
+            size: 16, color: Colors.white), // Icon putih
+        onTap: onTap,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: RefreshIndicator(
-        onRefresh: _refreshData,
+      appBar: AppBar(
+        title: const Text('Tentang Saya'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black),
+      ),
+      body: SingleChildScrollView(
         child: Column(
           children: [
             Padding(
@@ -150,7 +150,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Container(
                       width: 100,
                       height: 100,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         image: DecorationImage(
                           fit: BoxFit.cover,
@@ -175,143 +175,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Colors.grey,
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _logout,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14.0),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 60, vertical: 10),
-                      elevation: 5,
-                    ),
-                    child: Text(
-                      'Keluar',
-                      style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  const Divider(),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Prediksi Terakhir',
-                          style: GoogleFonts.poppins(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black)),
-                      OutlinedButton(
-                        onPressed: () => _navigateToHistory(context),
-                        style: OutlinedButton.styleFrom(
-                          side:
-                              const BorderSide(color: Colors.blue, width: 1.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          minimumSize: const Size(50, 27),
-                        ),
-                        child: Text(
-                          'Lihat Lainnya',
-                          style: GoogleFonts.poppins(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.only(
-                  left: 16.0,
-                  right: 16.0,
-                  top: 2.0,
-                  bottom: 5.0,
-                ),
-                child: FutureBuilder<List<History>?>(
-                  future: _latestPredictions,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const Center(child: CircularProgressIndicator());
-                    } else if (snapshot.hasError) {
-                      return Center(
-                          child: Text('Tidak Ada Riwayat Prediksi.',
-                              style: GoogleFonts.poppins(color: Colors.black)));
-                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                      return Center(
-                          child: Text('Tidak Ada Riwayat Prediksi.',
-                              style: GoogleFonts.poppins(color: Colors.black)));
-                    } else {
-                      final latestPredictions = snapshot.data!.take(5).toList();
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ...latestPredictions.map((prediction) {
-                            return Card(
-                              color: Colors.white,
-                              child: InkWell(
-                                onTap: () =>
-                                    _navigateToDetail(context, prediction),
-                                child: ListTile(
-                                  leading: ClipRRect(
-                                    borderRadius: BorderRadius.circular(25.0),
-                                    child: Image.network(prediction.imageUrl,
-                                        width: 50,
-                                        height: 50,
-                                        fit: BoxFit.cover),
-                                  ),
-                                  title: RichText(
-                                    text: TextSpan(
-                                      text: 'Nama: ',
-                                      style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                      children: [
-                                        TextSpan(
-                                          text: prediction.animalName,
-                                          style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.black),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  subtitle: RichText(
-                                    text: TextSpan(
-                                      text: 'Kondisi: ',
-                                      style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black),
-                                      children: [
-                                        TextSpan(
-                                          text: prediction.predictionClass,
-                                          style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.black),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                        ],
-                      );
-                    }
-                  },
-                ),
+            const Divider(thickness: 1),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 10),
+                  Text(
+                    'Akun',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  _buildMenuItem('Profil Saya'),
+                  const SizedBox(height: 8),
+                  _buildMenuItem('Riwayat Prediksi'),
+                  const SizedBox(height: 8),
+                  _buildMenuItem('Tentang Kami'),
+                  const SizedBox(height: 8),
+                  _menuLogout('Keluar', onTap: _logout),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Survey Aplikasi',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Card(
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    color: Colors.blue.shade100,
+                    child: ListTile(
+                      title: Text(
+                        'Ikuti survei singkat ini untuk membantu kami!',
+                        style: GoogleFonts.poppins(fontSize: 14),
+                      ),
+                      trailing:
+                          const Icon(Icons.arrow_right, color: Colors.blue),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
