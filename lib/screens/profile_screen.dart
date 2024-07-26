@@ -73,6 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Telah Logout'),
+        backgroundColor: Colors.red,
       ),
     );
   }
@@ -135,7 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       elevation: 5, // Menambahkan elevasi untuk efek bayangan
                     ),
                     child: Text(
-                      'Keluar Aplikasi',
+                      'Keluar',
                       style: GoogleFonts.poppins(
                         color: Colors.white, // Mengatur warna teks
                         fontSize: 16, // Mengatur ukuran font
@@ -143,14 +144,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 10),
+                  const Divider(),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('Prediksi Terakhir',
+                          style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black)),
+                      OutlinedButton(
+                        onPressed: () => _navigateToHistory(context),
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(
+                              color: Colors.blue,
+                              width: 1.0), // Menambahkan ukuran outline
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                20), // Membuat border menjadi bulat
+                          ),
+                          minimumSize: const Size(50,
+                              27), // Menambahkan ukuran tombol (width, height)
+                        ),
+                        child: Text(
+                          'Lihat Riwayat Lainnya',
+                          style: GoogleFonts.poppins(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 12, // Menambahkan ukuran font
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-            const Divider(),
             Expanded(
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(16.0),
+                padding: const EdgeInsets.only(
+                  left: 16.0,
+                  right: 16.0,
+                  top: 2.0,
+                  bottom: 5.0,
+                ),
                 child: FutureBuilder<List<History>?>(
                   future: _latestPredictions,
                   builder: (context, snapshot) {
@@ -165,43 +204,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: Text('Tidak Ada Riwayat Prediksi.',
                               style: GoogleFonts.poppins(color: Colors.black)));
                     } else {
-                      final latestPredictions = snapshot.data!.take(3).toList();
+                      final latestPredictions = snapshot.data!.take(5).toList();
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Prediksi Terbaru',
-                                  style: GoogleFonts.poppins(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black)),
-                              OutlinedButton(
-                                onPressed: () => _navigateToHistory(context),
-                                style: OutlinedButton.styleFrom(
-                                  side: const BorderSide(
-                                      color: Colors.blue,
-                                      width: 1.0), // Menambahkan ukuran outline
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        20), // Membuat border menjadi bulat
-                                  ),
-                                  minimumSize: const Size(50,
-                                      27), // Menambahkan ukuran tombol (width, height)
-                                ),
-                                child: Text(
-                                  'Lihat Riwayat Lainnya',
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 12, // Menambahkan ukuran font
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
                           ...latestPredictions.map((prediction) {
                             return Card(
                               color: Colors.white,
