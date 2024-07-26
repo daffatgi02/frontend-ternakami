@@ -148,8 +148,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return const Center(
-                        child: Text('Error fetching predictions.',
-                            style: TextStyle(color: Colors.red)));
+                        child: Text('Tidak Ada Riwayat Prediksi.',
+                            style: TextStyle(color: Colors.black)));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(
                         child: Text('Tidak Ada Riwayat Prediksi.',
