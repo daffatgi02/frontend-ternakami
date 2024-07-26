@@ -32,6 +32,7 @@ dependencies:
   uuid: ^4.4.2
   app_bar_with_search_switch: ^1.8.5
   shared_preferences: ^2.2.3
+  crop_your_image: ^1.1.0
 
 dev_dependencies:
   flutter_test:
@@ -47,4 +48,5 @@ flutter:
     - assets\gambar\onboarding1.png
     - assets\gambar\onboarding3.png
     - assets\gambar\logo.png
+    - assets\gambar\profil.png
     - assets\animations\sukses.gif

@@ -1,6 +1,5 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
-import 'dart:ui' as ui;
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
@@ -8,11 +7,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ternakami/services/api_service.dart';
 import 'package:flutter/services.dart';
-import 'package:crop/crop.dart';
+import 'package:crop_your_image/crop_your_image.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'hasilprediksi_screen.dart';
-import 'package:uuid/uuid.dart'; // Tambahkan ini
+import 'package:uuid/uuid.dart';
 
 class PredictionScreen extends StatefulWidget {
   final String token;
@@ -37,7 +36,6 @@ class _PredictionScreenState extends State<PredictionScreen>
   final ApiService _apiService = ApiService();
 
   final CropController _cropController = CropController();
-  final BoxShape _shape = BoxShape.rectangle;
 
   late AnimationController _scanController;
   late Animation<double> _scanAnimation;
@@ -235,48 +233,33 @@ class _PredictionScreenState extends State<PredictionScreen>
               ),
             ],
           ),
-          body: Crop(
-            controller: _cropController,
-            shape: _shape,
-            foreground: IgnorePointer(
-              child: Container(
-                alignment: Alignment.bottomRight,
-              ),
-            ),
-            child: Image.file(File(_image!.path), fit: BoxFit.cover),
-          ),
+          body: _image != null
+              ? Crop(
+                  image: File(_image!.path).readAsBytesSync(),
+                  controller: _cropController,
+                  onCropped: (image) async {
+                    final uuid = const Uuid().v4();
+                    final tempDir = await getTemporaryDirectory();
+                    final filePath = '${tempDir.path}/$uuid.png';
+                    final file = File(filePath);
+                    await file.writeAsBytes(image);
+
+                    setState(() {
+                      _image = XFile(filePath);
+                    });
+
+                    Navigator.of(context).pop();
+                    _showImagePreview();
+                  },
+                )
+              : const Center(child: CircularProgressIndicator()),
         ),
       ),
     );
   }
 
   Future<void> _cropImage() async {
-    final pixelRatio = MediaQuery.of(context).devicePixelRatio;
-    final cropped = await _cropController.crop(pixelRatio: pixelRatio);
-
-    if (cropped != null) {
-      final byteData = await cropped.toByteData(format: ui.ImageByteFormat.png);
-      if (byteData != null) {
-        final buffer = byteData.buffer.asUint8List();
-
-        // Dapatkan direktori sementara
-        final tempDir = await getTemporaryDirectory();
-        final uuid = const Uuid().v4(); // Buat UUID acak
-        final filePath =
-            '${tempDir.path}/$uuid.png'; // Gunakan UUID sebagai nama file
-
-        // Simpan gambar hasil pemotongan ke file sementara
-        final file = File(filePath);
-        await file.writeAsBytes(buffer);
-
-        setState(() {
-          _image = XFile(filePath);
-        });
-
-        Navigator.of(context).pop();
-        _showImagePreview();
-      }
-    }
+    _cropController.crop();
   }
 
   Future<void> _predict() async {
@@ -450,12 +433,6 @@ class _PredictionScreenState extends State<PredictionScreen>
                 IconButton(
                   icon: const Icon(Icons.cameraswitch, color: Colors.white),
                   onPressed: _flipCamera,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.more_vert, color: Colors.white),
-                  onPressed: () {
-                    // Add more options functionality here
-                  },
                 ),
               ],
             ),

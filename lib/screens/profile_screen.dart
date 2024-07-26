@@ -1,4 +1,4 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:ternakami/services/api_service.dart';
@@ -80,7 +80,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
-        content: Text('Telah Logout'),
+        content: Text('Anda telah keluar'),
         backgroundColor: Colors.red,
       ),
     );
@@ -109,7 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: [
                   const CircleAvatar(
                     radius: 50,
-                    backgroundImage: AssetImage('assets/gambar/logo.png'),
+                    backgroundImage: AssetImage('assets/gambar/profil.png'),
                   ),
                   const SizedBox(height: 10),
                   Text(
