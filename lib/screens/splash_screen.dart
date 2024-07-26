@@ -5,6 +5,7 @@ import 'package:another_flutter_splash_screen/another_flutter_splash_screen.dart
 import 'package:ternakami/screens/onboarding_screen.dart';
 import 'package:ternakami/screens/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/cupertino.dart'; // Import Cupertino package
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -30,7 +31,7 @@ class SplashScreen extends StatelessWidget {
       onAnimationEnd: () async {
         bool seenOnboarding = await hasSeenOnboarding();
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (context) =>
                 seenOnboarding ? const LoginScreen() : const OnboardingScreen(),
           ),

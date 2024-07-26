@@ -6,6 +6,7 @@ import 'package:ternakami/screens/register_screen.dart';
 import 'package:ternakami/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home_screen.dart';
+import 'package:flutter/cupertino.dart'; // Import Cupertino package
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -50,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
               builder: (context) => HomeScreen(
                     token: result.token,
                     fullname: result.fullname,
@@ -82,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
         print('Token valid');
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (context) => HomeScreen(
               token: token,
               fullname: fullname,
@@ -280,7 +281,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(
+                          CupertinoPageRoute(
                               builder: (context) => const RegisterScreen()),
                         );
                       },

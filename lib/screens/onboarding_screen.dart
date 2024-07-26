@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:ternakami/screens/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter/cupertino.dart'; // Import Cupertino package
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -14,7 +15,7 @@ class OnboardingScreen extends StatelessWidget {
     await prefs.setBool('seenOnboarding', true);
     print('Onboarding completed, status saved');
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => const LoginScreen()),
+      CupertinoPageRoute(builder: (_) => const LoginScreen()),
     );
   }
 

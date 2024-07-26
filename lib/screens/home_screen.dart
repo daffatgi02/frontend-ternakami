@@ -9,6 +9,7 @@ import 'package:ternakami/screens/profile_screen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:ternakami/screens/all_articles_screen.dart'; // Import the new screen
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter/cupertino.dart'; // Import Cupertino package
 
 class HomeScreen extends StatefulWidget {
   final String token;
@@ -192,7 +193,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(
+                  CupertinoPageRoute(
                     builder: (context) =>
                         AllArticlesScreen(articles: allArticles),
                   ),
@@ -235,7 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void navigateToPrediction(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (context) => PredictionScreen(token: widget.token),
       ),
     );
@@ -277,7 +278,7 @@ class _ArticleCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
+          CupertinoPageRoute(
             builder: (context) => ArticleDetailScreen(article: article),
           ),
         );
