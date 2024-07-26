@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class TentangKamiScreen extends StatelessWidget {
-  const TentangKamiScreen({Key? key}) : super(key: key);
+  const TentangKamiScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

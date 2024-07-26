@@ -111,7 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       decoration: BoxDecoration(
         color: Colors.redAccent, // Background merah
         border: Border.all(
-            color: Color.fromARGB(255, 255, 255, 255),
+            color: const Color.fromARGB(255, 255, 255, 255),
             width: 1), // Border hitam tipis
         borderRadius: BorderRadius.circular(10), // Radius border
       ),
@@ -136,7 +136,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Tentang Saya'),
+        title: const Text('Profil Saya'),
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),

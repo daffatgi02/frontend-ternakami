@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:ternakami/models/article.dart';
 import 'package:ternakami/models/history.dart';
 import 'package:ternakami/screens/history_detail_screen.dart';
-import 'package:ternakami/screens/history_screen.dart';
 import 'package:ternakami/services/api_service.dart';
 import 'package:ternakami/services/article_service.dart';
 import 'package:ternakami/screens/article_detail_screen.dart';
