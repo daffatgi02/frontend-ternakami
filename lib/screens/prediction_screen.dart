@@ -1,4 +1,3 @@
-// lib\screens\prediction_screen.dart
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 import 'dart:ui' as ui;
@@ -13,6 +12,7 @@ import 'package:crop/crop.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'hasilprediksi_screen.dart';
+import 'package:uuid/uuid.dart'; // Tambahkan ini
 
 class PredictionScreen extends StatefulWidget {
   final String token;
@@ -261,7 +261,9 @@ class _PredictionScreenState extends State<PredictionScreen>
 
         // Dapatkan direktori sementara
         final tempDir = await getTemporaryDirectory();
-        final filePath = '${tempDir.path}/cropped_image.png';
+        final uuid = const Uuid().v4(); // Buat UUID acak
+        final filePath =
+            '${tempDir.path}/$uuid.png'; // Gunakan UUID sebagai nama file
 
         // Simpan gambar hasil pemotongan ke file sementara
         final file = File(filePath);
@@ -338,6 +340,12 @@ class _PredictionScreenState extends State<PredictionScreen>
           ),
         ),
       );
+    }
+
+    // Hapus file gambar sementara setelah prediksi selesai
+    final file = File(_image!.path);
+    if (await file.exists()) {
+      await file.delete();
     }
   }
 

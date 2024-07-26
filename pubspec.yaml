@@ -29,6 +29,7 @@ dependencies:
   easy_image_viewer: ^1.5.1
   smooth_page_indicator: ^1.2.0+3
   loading_animation_widget: ^1.2.1
+  uuid: ^4.4.2
 
 
 dev_dependencies:
