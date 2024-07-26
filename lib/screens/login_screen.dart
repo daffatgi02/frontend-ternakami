@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ternakami/screens/register_screen.dart';
 import 'package:ternakami/services/api_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -25,6 +26,12 @@ class _LoginScreenState extends State<LoginScreen> {
   String? emailError;
   String? passwordError;
 
+  @override
+  void initState() {
+    super.initState();
+    _checkRememberedUser();
+  }
+
   void login() async {
     if (_formKey.currentState?.validate() ?? false) {
       final email = emailController.text;
@@ -32,6 +39,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
       final result = await apiService.login(email, password);
       if (result != null) {
+        if (rememberMe) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('token', result.token);
+          await prefs.setString('fullname', result.fullname);
+          await prefs.setInt('userid', result.userid);
+          await prefs.setString('email', result.email);
+          print('Token berhasil disimpan: ${result.token}');
+        }
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -47,6 +63,37 @@ class _LoginScreenState extends State<LoginScreen> {
           emailError = 'Email Salah atau Akun tidak ditemukan!';
           passwordError = 'Kata Sandi Salah atau Akun tidak ditemukan!';
         });
+      }
+    }
+  }
+
+  void _checkRememberedUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    String? fullname = prefs.getString('fullname');
+    int? userid = prefs.getInt('userid');
+    String? email = prefs.getString('email');
+
+    if (token != null && fullname != null && userid != null && email != null) {
+      print('Token ditemukan di penyimpanan: $token');
+      // Anda bisa menambahkan validasi token di sini
+      final isValid = await apiService.validateToken(token);
+      if (isValid) {
+        print('Token valid');
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(
+              token: token,
+              fullname: fullname,
+              userid: userid,
+              email: email,
+            ),
+          ),
+        );
+      } else {
+        print('Token tidak valid');
+        prefs.clear(); // Hapus token yang tidak valid
       }
     }
   }

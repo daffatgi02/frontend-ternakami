@@ -148,4 +148,22 @@ class ApiService {
       throw Exception('Error fetching history');
     }
   }
+
+  // Tambahkan method berikut ke dalam ApiService class
+  Future<bool> validateToken(String token) async {
+    try {
+      final response = await _dio.get(
+        '$baseUrl/api/validation',
+        options: Options(
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        ),
+      );
+      return response.statusCode == 200;
+    } on DioException catch (e) {
+      print('Token validation error: ${e.response?.statusCode} ${e.message}');
+      return false;
+    }
+  }
 }

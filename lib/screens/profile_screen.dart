@@ -7,6 +7,7 @@ import 'package:ternakami/screens/history_screen.dart';
 import 'package:ternakami/screens/history_detail_screen.dart'; // Import layar detail
 import 'package:ternakami/screens/login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String token;
@@ -61,15 +62,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  void _logout() {
-    // Menghapus data token, fullname, dan email
-    // Menavigasi kembali ke halaman login
+  Future<void> _logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Print the token and other details before removing
+    String? token = prefs.getString('token');
+    String? fullname = prefs.getString('fullname');
+    String? email = prefs.getString('email');
+    int? userid = prefs.getInt('userid');
+
+    print('Token yang akan dihapus: $token');
+    print('Fullname yang akan dihapus: $fullname');
+    print('Email yang akan dihapus: $email');
+    print('UserID yang akan dihapus: $userid');
+
+    await prefs.clear();
+
+    print('Token berhasil dihapus.');
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => const LoginScreen()),
     );
 
-    // Menampilkan dialog "Telah Logout"
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Telah Logout'),
@@ -95,7 +110,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         onRefresh: _refreshData,
         child: Column(
           children: [
-            // Bagian yang tidak dapat di-scroll
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
@@ -124,23 +138,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ElevatedButton(
                     onPressed: _logout,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          Colors.red, // Mengatur warna latar belakang tombol
+                      backgroundColor: Colors.red,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            14.0), // Mengatur radius border
+                        borderRadius: BorderRadius.circular(14.0),
                       ),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 60,
-                          vertical: 10), // Menambahkan padding kustom
-                      elevation: 5, // Menambahkan elevasi untuk efek bayangan
+                          horizontal: 60, vertical: 10),
+                      elevation: 5,
                     ),
                     child: Text(
                       'Keluar',
                       style: GoogleFonts.poppins(
-                        color: Colors.white, // Mengatur warna teks
-                        fontSize: 16, // Mengatur ukuran font
-                        fontWeight: FontWeight.w500, // Mengatur ketebalan font
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -157,22 +168,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       OutlinedButton(
                         onPressed: () => _navigateToHistory(context),
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(
-                              color: Colors.blue,
-                              width: 1.0), // Menambahkan ukuran outline
+                          side:
+                              const BorderSide(color: Colors.blue, width: 1.0),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                20), // Membuat border menjadi bulat
+                            borderRadius: BorderRadius.circular(20),
                           ),
-                          minimumSize: const Size(50,
-                              27), // Menambahkan ukuran tombol (width, height)
+                          minimumSize: const Size(50, 27),
                         ),
                         child: Text(
                           'Lihat Riwayat Lainnya',
                           style: GoogleFonts.poppins(
                             color: Colors.blue,
                             fontWeight: FontWeight.w500,
-                            fontSize: 12, // Menambahkan ukuran font
+                            fontSize: 12,
                           ),
                         ),
                       ),

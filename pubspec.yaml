@@ -31,7 +31,7 @@ dependencies:
   loading_animation_widget: ^1.2.1
   uuid: ^4.4.2
   app_bar_with_search_switch: ^1.8.5
-
+  shared_preferences: ^2.2.3
 
 dev_dependencies:
   flutter_test:
