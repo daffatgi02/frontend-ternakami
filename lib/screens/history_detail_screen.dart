@@ -67,15 +67,30 @@ class HistoryDetailScreen extends StatelessWidget {
                     right: 16,
                     top: 39,
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment
+                          .spaceBetween, // Menyebarkan widget di antara ruang yang tersedia
+                      crossAxisAlignment: CrossAxisAlignment
+                          .end, // Menyelaraskan widget secara vertikal
                       children: [
                         const Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment
+                              .start, // Menyelaraskan teks di awal kolom
                           children: [
                             Text(
                               'Detail Riwayat',
                               style: TextStyle(
                                 fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(
+                                height:
+                                    8), // Memberi jarak vertikal antara teks
+                            Text(
+                              'Hasil prediksi pada kambingmu!',
+                              style: TextStyle(
+                                fontSize: 12,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
                               ),

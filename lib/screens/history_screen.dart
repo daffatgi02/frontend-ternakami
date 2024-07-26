@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart'; // Import Cupertino package
 import 'package:ternakami/models/history.dart';
 import 'package:ternakami/services/api_service.dart';
 import 'package:ternakami/screens/history_detail_screen.dart';
@@ -171,7 +172,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                       onTap: () {
                                         Navigator.push(
                                           context,
-                                          MaterialPageRoute(
+                                          CupertinoPageRoute(
+                                            // Use CupertinoPageRoute
                                             builder: (context) =>
                                                 HistoryDetailScreen(
                                                     history: history),
