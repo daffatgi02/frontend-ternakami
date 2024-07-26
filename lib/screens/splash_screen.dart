@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:another_flutter_splash_screen/another_flutter_splash_screen.dart';
 import 'package:ternakami/screens/onboarding_screen.dart';
+import 'package:ternakami/screens/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
+
+  Future<bool> hasSeenOnboarding() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool seenOnboarding = prefs.getBool('seenOnboarding') ?? false;
+    print('Has seen onboarding (SplashScreen): $seenOnboarding');
+    return seenOnboarding;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +25,13 @@ class SplashScreen extends StatelessWidget {
         width: 200,
         child: Image.asset("assets/gambar/logo.png"),
       ),
-      onAnimationEnd: () {
+      onAnimationEnd: () async {
+        bool seenOnboarding = await hasSeenOnboarding();
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => const OnboardingScreen()),
+          MaterialPageRoute(
+            builder: (context) =>
+                seenOnboarding ? const LoginScreen() : const OnboardingScreen(),
+          ),
         );
       },
     );

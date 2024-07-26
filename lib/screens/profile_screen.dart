@@ -65,18 +65,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _logout() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    // Print the token and other details before removing
-    String? token = prefs.getString('token');
-    String? fullname = prefs.getString('fullname');
-    String? email = prefs.getString('email');
-    int? userid = prefs.getInt('userid');
-
-    print('Token yang akan dihapus: $token');
-    print('Fullname yang akan dihapus: $fullname');
-    print('Email yang akan dihapus: $email');
-    print('UserID yang akan dihapus: $userid');
-
-    await prefs.clear();
+    // Hapus hanya kunci yang terkait dengan login
+    await prefs.remove('token');
+    await prefs.remove('fullname');
+    await prefs.remove('email');
+    await prefs.remove('userid');
 
     print('Token berhasil dihapus.');
 
@@ -176,7 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           minimumSize: const Size(50, 27),
                         ),
                         child: Text(
-                          'Lihat Riwayat Lainnya',
+                          'Lihat Lainnya',
                           style: GoogleFonts.poppins(
                             color: Colors.blue,
                             fontWeight: FontWeight.w500,

@@ -2,9 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:ternakami/screens/login_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
+
+  Future<void> completeOnboarding(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('seenOnboarding', true);
+    print('Onboarding completed, status saved');
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -90,12 +100,7 @@ class OnboardingScreen extends StatelessWidget {
             ),
           ),
         ],
-        onDone: () {
-          // Navigate to the login screen
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const LoginScreen()),
-          );
-        },
+        onDone: () => completeOnboarding(context),
         showSkipButton: true,
         skip: const Text("Lewati", style: TextStyle(color: Colors.blue)),
         next: const Icon(Icons.arrow_forward, color: Colors.blue),
