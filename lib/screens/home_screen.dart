@@ -184,31 +184,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: Colors.black,
               ),
             ),
-            OutlinedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => HistoryScreen(token: widget.token),
-                  ),
-                );
-              },
-              style: OutlinedButton.styleFrom(
-                side: const BorderSide(color: Colors.blue, width: 1.0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                minimumSize: const Size(50, 27),
-              ),
-              child: Text(
-                'Lihat Lainnya',
-                style: GoogleFonts.poppins(
-                  fontWeight: FontWeight.w500,
-                  color: Colors.blue,
-                  fontSize: 12,
-                ),
-              ),
-            ),
           ],
         ),
         const SizedBox(height: 10),

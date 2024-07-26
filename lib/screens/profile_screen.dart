@@ -1,9 +1,12 @@
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ternakami/screens/login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ternakami/screens/tentang_kami_screen.dart';
+import 'package:ternakami/screens/history_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String token;
@@ -194,9 +197,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   _buildMenuItem('Profil Saya'),
                   const SizedBox(height: 8),
-                  _buildMenuItem('Riwayat Prediksi'),
+                  _buildMenuItem('Riwayat Prediksi', onTap: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                          builder: (context) =>
+                              HistoryScreen(token: widget.token)),
+                    );
+                  }),
                   const SizedBox(height: 8),
-                  _buildMenuItem('Tentang Kami'),
+                  _buildMenuItem('Tentang Kami', onTap: () {
+                    Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                          builder: (context) => const TentangKamiScreen()),
+                    );
+                  }),
                   const SizedBox(height: 8),
                   _menuLogout('Keluar', onTap: _logout),
                   const SizedBox(height: 20),
@@ -212,7 +228,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     color: Colors.blue.shade100,
                     child: ListTile(
                       title: Text(
-                        'Ikuti survei singkat ini untuk membantu kami!',
+                        'Ikuti survei singkat ini untuk membantu aplikasi kami!',
                         style: GoogleFonts.poppins(fontSize: 14),
                       ),
                       trailing:
