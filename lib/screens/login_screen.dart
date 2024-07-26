@@ -102,7 +102,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'Masuk ke Akun anda',
+                      'Masuk ke Akun Anda',
                       textAlign: TextAlign.center,
                       style: GoogleFonts.poppins(
                         fontSize: 24,

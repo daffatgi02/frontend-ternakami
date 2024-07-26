@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:introduction_screen/introduction_screen.dart';
 import 'package:ternakami/screens/login_screen.dart';
 
@@ -26,14 +27,15 @@ class OnboardingScreen extends StatelessWidget {
             ),
             decoration: PageDecoration(
               pageColor: Colors.white,
-              titleTextStyle: TextStyle(
-                color: Colors.black,
+              titleTextStyle: GoogleFonts.poppins(
+                color: Colors.blue,
                 fontSize: screenWidth * 0.06,
                 fontWeight: FontWeight.bold,
               ),
-              bodyTextStyle: TextStyle(
-                color: Colors.black,
+              bodyTextStyle: GoogleFonts.poppins(
+                color: const Color.fromARGB(255, 152, 150, 150),
                 fontSize: screenWidth * 0.04,
+                fontWeight: FontWeight.w600,
               ),
               imagePadding: EdgeInsets.all(screenWidth * 0.05),
             ),
@@ -50,14 +52,15 @@ class OnboardingScreen extends StatelessWidget {
             ),
             decoration: PageDecoration(
               pageColor: Colors.white,
-              titleTextStyle: TextStyle(
-                color: Colors.black,
+              titleTextStyle: GoogleFonts.poppins(
+                color: Colors.blue,
                 fontSize: screenWidth * 0.06,
                 fontWeight: FontWeight.bold,
               ),
-              bodyTextStyle: TextStyle(
-                color: Colors.black,
+              bodyTextStyle: GoogleFonts.poppins(
+                color: Colors.grey,
                 fontSize: screenWidth * 0.04,
+                fontWeight: FontWeight.w600,
               ),
               imagePadding: EdgeInsets.all(screenWidth * 0.05),
             ),
@@ -73,14 +76,15 @@ class OnboardingScreen extends StatelessWidget {
             ),
             decoration: PageDecoration(
               pageColor: Colors.white,
-              titleTextStyle: TextStyle(
-                color: Colors.black,
+              titleTextStyle: GoogleFonts.poppins(
+                color: Colors.blue,
                 fontSize: screenWidth * 0.06,
                 fontWeight: FontWeight.bold,
               ),
-              bodyTextStyle: TextStyle(
-                color: Colors.black,
+              bodyTextStyle: GoogleFonts.poppins(
+                color: Colors.grey,
                 fontSize: screenWidth * 0.04,
+                fontWeight: FontWeight.w600,
               ),
               imagePadding: EdgeInsets.all(screenWidth * 0.05),
             ),
@@ -93,15 +97,15 @@ class OnboardingScreen extends StatelessWidget {
           );
         },
         showSkipButton: true,
-        skip: const Text("Skip", style: TextStyle(color: Colors.blue)),
+        skip: const Text("Lewati", style: TextStyle(color: Colors.blue)),
         next: const Icon(Icons.arrow_forward, color: Colors.blue),
-        done: const Text("Done",
+        done: const Text("Selesai",
             style: TextStyle(fontWeight: FontWeight.w600, color: Colors.blue)),
         dotsDecorator: DotsDecorator(
           size: Size.square(screenWidth * 0.025),
           activeSize: Size(screenWidth * 0.05, screenWidth * 0.025),
-          activeColor: Theme.of(context).colorScheme.secondary,
-          color: Colors.blue,
+          activeColor: Colors.blue, // Warna kuning untuk dot aktif
+          color: Colors.grey, // Warna biru untuk dot tidak aktif
           spacing: EdgeInsets.symmetric(horizontal: screenWidth * 0.01),
           activeShape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(screenWidth * 0.05),

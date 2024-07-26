@@ -101,7 +101,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 15),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32.0),
               child: Form(
@@ -117,7 +117,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 15),
                     TextFormField(
                       controller: emailController,
                       decoration: InputDecoration(
@@ -139,7 +139,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                       style: GoogleFonts.poppins(),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 15),
                     TextFormField(
                       controller: fullnameController,
                       decoration: InputDecoration(
@@ -158,7 +158,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                       style: GoogleFonts.poppins(),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 15),
                     TextFormField(
                       controller: passwordController,
                       decoration: InputDecoration(
@@ -193,7 +193,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                       style: GoogleFonts.poppins(),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 15),
                     TextFormField(
                       controller: confirmPasswordController,
                       decoration: InputDecoration(
@@ -229,7 +229,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                       style: GoogleFonts.poppins(),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 15),
                     ElevatedButton(
                       onPressed: register,
                       style: ElevatedButton.styleFrom(
@@ -247,7 +247,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 15),
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context);
@@ -258,7 +258,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                     // Debug button for testing success dialog
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 15),
                   ],
                 ),
               ),
