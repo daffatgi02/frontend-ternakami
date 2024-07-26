@@ -128,8 +128,15 @@ class ApiService {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> responseData = response.data;
-        return responseData.map((data) => History.fromJson(data)).toList();
+        final responseData = response.data;
+        if (responseData is List) {
+          return responseData.map((data) => History.fromJson(data)).toList();
+        } else if (responseData is Map &&
+            responseData['message'] == 'Belum ada riwayat predict') {
+          return [];
+        } else {
+          throw Exception('Unexpected response format');
+        }
       } else if (response.statusCode == 404) {
         return [];
       } else {
