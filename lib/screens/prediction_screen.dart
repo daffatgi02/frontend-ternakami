@@ -1,14 +1,17 @@
+// lib\screens\prediction_screen.dart
 // ignore_for_file: library_private_types_in_public_api, use_build_context_synchronously
 
 import 'dart:ui' as ui;
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ternakami/services/api_service.dart';
 import 'package:flutter/services.dart';
 import 'package:crop/crop.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'hasilprediksi_screen.dart';
 
 class PredictionScreen extends StatefulWidget {
@@ -38,6 +41,8 @@ class _PredictionScreenState extends State<PredictionScreen>
 
   late AnimationController _scanController;
   late Animation<double> _scanAnimation;
+
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -115,15 +120,18 @@ class _PredictionScreenState extends State<PredictionScreen>
           builder: (context, setState) {
             return AlertDialog(
               content: SingleChildScrollView(
-                // Wrapping the Column with SingleChildScrollView
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     _image != null
                         ? Image.file(File(_image!.path), height: 200)
-                        : const SizedBox(
+                        : SizedBox(
                             height: 200,
-                            child: Center(child: Text('No Image Selected')),
+                            child: Center(
+                                child: Text(
+                              'Tidak ada gambar yang di pilih',
+                              style: GoogleFonts.poppins(),
+                            )),
                           ),
                     const SizedBox(height: 20),
                     _image != null
@@ -132,7 +140,10 @@ class _PredictionScreenState extends State<PredictionScreen>
                               Navigator.of(context).pop();
                               _showCropScreen();
                             },
-                            child: const Text('Crop Image'),
+                            child: Text(
+                              'Potong Gambar',
+                              style: GoogleFonts.poppins(),
+                            ),
                           )
                         : Container(),
                     const SizedBox(height: 20),
@@ -146,17 +157,21 @@ class _PredictionScreenState extends State<PredictionScreen>
                       items: _types.map((type) {
                         return DropdownMenuItem<String>(
                           value: type,
-                          child: Text(type),
+                          child: Text(type, style: GoogleFonts.poppins()),
                         );
                       }).toList(),
-                      decoration:
-                          const InputDecoration(labelText: 'Tipe Hewan'),
+                      decoration: InputDecoration(
+                        labelText: 'Tipe Hewan',
+                        labelStyle: GoogleFonts.poppins(),
+                      ),
                     ),
                     const SizedBox(height: 20),
                     TextField(
                       controller: _animalNameController,
-                      decoration:
-                          const InputDecoration(labelText: 'Nama Peliharaan'),
+                      decoration: InputDecoration(
+                        labelText: 'Nama Peliharaan',
+                        labelStyle: GoogleFonts.poppins(),
+                      ),
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
                             RegExp(r'[a-zA-Z0-9\s]')),
@@ -173,7 +188,10 @@ class _PredictionScreenState extends State<PredictionScreen>
                           onPressed: () {
                             Navigator.of(context).pop();
                           },
-                          child: const Text('Foto Ulang'),
+                          child: Text(
+                            'Foto Ulang',
+                            style: GoogleFonts.poppins(),
+                          ),
                         ),
                         ElevatedButton(
                           onPressed: _selectedType != null &&
@@ -183,7 +201,10 @@ class _PredictionScreenState extends State<PredictionScreen>
                                   _predict();
                                 }
                               : null,
-                          child: const Text('Lanjutkan'),
+                          child: Text(
+                            'Lanjutkan',
+                            style: GoogleFonts.poppins(),
+                          ),
                         ),
                       ],
                     ),
@@ -202,7 +223,10 @@ class _PredictionScreenState extends State<PredictionScreen>
       MaterialPageRoute(
         builder: (context) => Scaffold(
           appBar: AppBar(
-            title: const Text('Crop Image'),
+            title: Text(
+              'Potong Gambar',
+              style: GoogleFonts.poppins(),
+            ),
             centerTitle: true,
             actions: [
               IconButton(
@@ -254,14 +278,29 @@ class _PredictionScreenState extends State<PredictionScreen>
   }
 
   Future<void> _predict() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     if (_image == null ||
         _selectedType == null ||
         _animalNameController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Tolong isi semua data!")),
+        SnackBar(
+          content: Text(
+            "Tolong isi semua data!",
+            style: GoogleFonts.poppins(),
+          ),
+        ),
       );
+      setState(() {
+        _isLoading = false;
+      });
       return;
     }
+
+    // Show loading dialog
+    _showLoadingDialog();
 
     final Map<String, dynamic>? predictionResult = await _apiService.predict(
       widget.token,
@@ -269,6 +308,13 @@ class _PredictionScreenState extends State<PredictionScreen>
       _selectedType!,
       _animalNameController.text,
     );
+
+    // Hide loading dialog
+    Navigator.of(context).pop();
+
+    setState(() {
+      _isLoading = false;
+    });
 
     if (predictionResult != null &&
         predictionResult.containsKey('label_prediksi')) {
@@ -285,9 +331,64 @@ class _PredictionScreenState extends State<PredictionScreen>
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to make prediction")),
+        SnackBar(
+          content: Text(
+            "Gagal Melakukan Prediksi ! Laporkan Masalah ini!",
+            style: GoogleFonts.poppins(),
+          ),
+        ),
       );
     }
+  }
+
+  void _showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.blue,
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                LoadingAnimationWidget.fourRotatingDots(
+                  color: Colors.white,
+                  size: 60,
+                ),
+                const SizedBox(height: 20),
+                Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Mohon Tunggu',
+                        style: GoogleFonts.poppins(
+                          textStyle: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        'Proses Sedang Berlangsung',
+                        style: GoogleFonts.poppins(
+                          textStyle: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -298,9 +399,24 @@ class _PredictionScreenState extends State<PredictionScreen>
           Positioned.fill(
             child: _cameraController == null ||
                     !_cameraController!.value.isInitialized
-                ? const Center(child: CircularProgressIndicator())
+                ? const Center(
+                    child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(Colors.blue),
+                  ))
                 : CameraPreview(_cameraController!),
           ),
+          if (_isLoading)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black54,
+                child: Center(
+                  child: LoadingAnimationWidget.fourRotatingDots(
+                    color: Colors.blue,
+                    size: 50,
+                  ),
+                ),
+              ),
+            ),
           Positioned(
             top: 40,
             left: 10,
@@ -388,12 +504,16 @@ class _PredictionScreenState extends State<PredictionScreen>
                     ),
                   ),
                   const SizedBox(height: 15),
-                  const Text(
+                  Text(
                     'Sesuaikan posisi mata kambing agar memenuhi Frame',
-                    style: TextStyle(color: Colors.white),
+                    style: GoogleFonts.poppins(
+                      textStyle: const TextStyle(
+                        color: Colors.white,
+                      ),
+                    ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 15), // Adjust the spacing as needed
+                  const SizedBox(height: 15),
                   ElevatedButton(
                     onPressed: _selectImageFromGallery,
                     style: ElevatedButton.styleFrom(
@@ -403,12 +523,12 @@ class _PredictionScreenState extends State<PredictionScreen>
                         borderRadius: BorderRadius.circular(13),
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.drive_folder_upload_rounded),
-                        SizedBox(width: 5), // spacing between icon and text
-                        Text('Unggah Gambar'),
+                        const Icon(Icons.drive_folder_upload_rounded),
+                        const SizedBox(width: 5),
+                        Text('Unggah Gambar', style: GoogleFonts.poppins()),
                       ],
                     ),
                   ),
