@@ -100,27 +100,74 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                   style: TextStyle(color: Colors.black)),
                             ),
                           )
-                        : SliverGrid(
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 0.75,
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
-                            ),
+                        : SliverList(
                             delegate: SliverChildBuilderDelegate(
                               (BuildContext context, int index) {
                                 final history = _filteredHistory[index];
-                                return AnimatedContainer(
-                                  duration: const Duration(milliseconds: 300),
-                                  curve: Curves.easeInOut,
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 2.0),
                                   child: Card(
-                                    color: Colors.white,
                                     shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(16.0),
                                     ),
+                                    color: Colors.white,
                                     elevation: 4,
-                                    child: InkWell(
+                                    shadowColor: Colors.black54,
+                                    child: ListTile(
+                                      contentPadding:
+                                          const EdgeInsets.all(16.0),
+                                      leading: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        child: Image.network(
+                                          history.imageUrl,
+                                          width: 100,
+                                          height: 100,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      title: RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            const TextSpan(
+                                              text: 'Nama: ',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text: history.animalName,
+                                              style: const TextStyle(
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      subtitle: RichText(
+                                        text: TextSpan(
+                                          children: [
+                                            const TextSpan(
+                                              text: 'Hasil: ',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text: history.predictionClass,
+                                              style: const TextStyle(
+                                                color: Colors.grey,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      trailing: const Icon(
+                                          Icons.arrow_forward_ios,
+                                          color: Colors.grey),
                                       onTap: () {
                                         Navigator.push(
                                           context,
@@ -131,40 +178,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                           ),
                                         );
                                       },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                              child: Image.network(
-                                                history.imageUrl,
-                                                width: double.infinity,
-                                                height: 120,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Text(
-                                              history.predictionClass,
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 16,
-                                                color: Colors.black,
-                                              ),
-                                            ),
-                                            Text(
-                                              'Nama: ${history.animalName}',
-                                              style: TextStyle(
-                                                color: Colors.grey[700],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
                                     ),
                                   ),
                                 );
@@ -309,7 +322,7 @@ class SliverSearchAppBar extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 220;
+  double get maxExtent => 200;
 
   @override
   double get minExtent => 177;
