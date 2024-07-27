@@ -31,7 +31,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       final result = await apiService.register(email, password, fullname);
       if (result) {
-        showSuccessDialog();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Pendaftaran Akun Berhasil!"),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context); // Navigate to login page
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -40,35 +46,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
         );
       }
     }
-  }
-
-  void showSuccessDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              'assets/animations/sukses.gif',
-              width: 101,
-              height: 101,
-            ),
-            const SizedBox(height: 10),
-            const Text("Pendaftaran Akun Berhasil!"),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.pop(context);
-            },
-            child: const Text('Selesai'),
-          ),
-        ],
-      ),
-    );
   }
 
   bool isValidEmail(String email) {
@@ -88,7 +65,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             Container(
               height: MediaQuery.of(context).size.height * 0.4,
               decoration: const BoxDecoration(
-                color: Color(0xFF3572EF),
+                color: Colors.blue,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(50),
                   bottomRight: Radius.circular(50),
@@ -97,7 +74,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               child: Center(
                 child: Image.asset(
                   'assets/gambar/regis.png', // Replace with your image asset
-                  height: 250,
+                  height: 200,
                 ),
               ),
             ),
@@ -233,7 +210,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ElevatedButton(
                       onPressed: register,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF3572EF),
+                        backgroundColor: Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
