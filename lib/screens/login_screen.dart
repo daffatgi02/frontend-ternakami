@@ -126,20 +126,14 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Column(
           children: [
             Container(
-              height: MediaQuery.of(context).size.height * 0.4,
+              height: MediaQuery.of(context).size.height * 0.2,
               decoration: const BoxDecoration(
-                color: Colors.blue,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(50),
                   bottomRight: Radius.circular(50),
                 ),
               ),
-              child: Center(
-                child: Image.asset(
-                  'assets/gambar/login_image.png', // Replace with your image asset
-                  height: 250,
-                ),
-              ),
+              child: const Center(),
             ),
             const SizedBox(height: 20),
             Padding(
