@@ -48,7 +48,11 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
-    _pageController.jumpToPage(index);
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
@@ -60,7 +64,6 @@ class _HomeScreenState extends State<HomeScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Removed the AppBar here
             Expanded(
               child: PageView(
                 controller: _pageController,
@@ -98,8 +101,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-  // Removed _buildAppBar method here
 
   Widget _buildHomeContent() {
     return FutureBuilder<List<Article>>(

@@ -2,21 +2,46 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:introduction_screen/introduction_screen.dart';
 import 'package:ternakami/screens/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/cupertino.dart'; // Import Cupertino package
 
-class OnboardingScreen extends StatelessWidget {
+void main() => runApp(const OnboardingApp());
+
+class OnboardingApp extends StatelessWidget {
+  const OnboardingApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: OnboardingScreen(),
+    );
+  }
+}
+
+class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
+
+  @override
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
+}
+
+class _OnboardingScreenState extends State<OnboardingScreen> {
+  final PageController _pageController = PageController();
+  int _currentPageIndex = 0;
 
   Future<void> completeOnboarding(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setBool('seenOnboarding', true);
-    print('Onboarding completed, status saved');
     Navigator.of(context).pushReplacement(
       CupertinoPageRoute(builder: (_) => const LoginScreen()),
     );
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
   }
 
   @override
@@ -26,99 +51,147 @@ class OnboardingScreen extends StatelessWidget {
     final screenHeight = mediaQueryData.size.height;
 
     return Scaffold(
-      body: IntroductionScreen(
-        pages: [
-          PageViewModel(
-            title: "Selamat Datang!",
-            body:
+      body: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() {
+                _currentPageIndex = index;
+              });
+            },
+            children: [
+              buildPage(
+                screenWidth,
+                screenHeight,
+                "Selamat Datang!",
                 "Aplikasi Pendeteksi Penyakit Mata Pink Eye pada Hewan Kambing!",
-            image: Center(
-              child: Image.asset(
-                'assets/gambar/logo.png',
-                height: screenHeight * 0.3,
+                'assets/gambar/onboarding1.png',
               ),
-            ),
-            decoration: PageDecoration(
-              pageColor: Colors.white,
-              titleTextStyle: GoogleFonts.poppins(
-                color: Colors.blue,
-                fontSize: screenWidth * 0.06,
-                fontWeight: FontWeight.bold,
-              ),
-              bodyTextStyle: GoogleFonts.poppins(
-                color: const Color.fromARGB(255, 152, 150, 150),
-                fontSize: screenWidth * 0.04,
-                fontWeight: FontWeight.w600,
-              ),
-              imagePadding: EdgeInsets.all(screenWidth * 0.05),
-            ),
-          ),
-          PageViewModel(
-            title: "Fitur",
-            body:
+              buildPage(
+                screenWidth,
+                screenHeight,
+                "Fitur",
                 "Prediksi mata kambing dengan fitur Scan, lihat riwayat prediksi, dan baca artikel tentang pink eye.",
-            image: Center(
-              child: Image.asset(
-                'assets/gambar/logo.png',
-                height: screenHeight * 0.3,
+                'assets/gambar/onboarding2.png',
               ),
-            ),
-            decoration: PageDecoration(
-              pageColor: Colors.white,
-              titleTextStyle: GoogleFonts.poppins(
-                color: Colors.blue,
-                fontSize: screenWidth * 0.06,
-                fontWeight: FontWeight.bold,
+              buildPage(
+                screenWidth,
+                screenHeight,
+                "Ayo Mulai!",
+                "Mari jelajahi aplikasi ini!",
+                'assets/gambar/onboarding3.png',
               ),
-              bodyTextStyle: GoogleFonts.poppins(
-                color: Colors.grey,
-                fontSize: screenWidth * 0.04,
-                fontWeight: FontWeight.w600,
-              ),
-              imagePadding: EdgeInsets.all(screenWidth * 0.05),
+            ],
+          ),
+          Positioned(
+            bottom: 100, // Menyesuaikan posisi ke atas
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(3, (index) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 4),
+                  width: _currentPageIndex == index ? 12 : 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color:
+                        _currentPageIndex == index ? Colors.blue : Colors.grey,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                );
+              }),
             ),
           ),
-          PageViewModel(
-            title: "Ayo Mulai!",
-            body: "Mari jelajahi aplikasi ini!",
-            image: Center(
-              child: Image.asset(
-                'assets/gambar/onboarding2.png',
-                height: screenHeight * 0.3,
+          if (_currentPageIndex < 2)
+            Positioned(
+              bottom: 20,
+              left: 20,
+              right: 20,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      _pageController.animateToPage(
+                        2,
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.ease,
+                      );
+                    },
+                    child: const Text(
+                      "Lewati",
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      _pageController.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.ease,
+                      );
+                    },
+                    child: const Text(
+                      "Lanjutkan",
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ),
+                ],
               ),
             ),
-            decoration: PageDecoration(
-              pageColor: Colors.white,
-              titleTextStyle: GoogleFonts.poppins(
-                color: Colors.blue,
-                fontSize: screenWidth * 0.06,
-                fontWeight: FontWeight.bold,
+          if (_currentPageIndex == 2)
+            Positioned(
+              bottom: 20,
+              right: 20,
+              child: TextButton(
+                onPressed: () => completeOnboarding(context),
+                child: const Text(
+                  "Selesai",
+                  style: TextStyle(color: Colors.blue),
+                ),
               ),
-              bodyTextStyle: GoogleFonts.poppins(
-                color: Colors.grey,
-                fontSize: screenWidth * 0.04,
-                fontWeight: FontWeight.w600,
-              ),
-              imagePadding: EdgeInsets.all(screenWidth * 0.05),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget buildPage(
+    double screenWidth,
+    double screenHeight,
+    String title,
+    String body,
+    String imagePath,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            imagePath,
+            height: screenHeight * 0.3,
+          ),
+          SizedBox(height: screenHeight * 0.05),
+          Text(
+            title,
+            style: GoogleFonts.poppins(
+              color: Colors.blue,
+              fontSize: screenWidth * 0.06,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: screenHeight * 0.02),
+          Text(
+            body,
+            textAlign: TextAlign.center,
+            style: GoogleFonts.poppins(
+              color: const Color.fromARGB(255, 152, 150, 150),
+              fontSize: screenWidth * 0.04,
+              fontWeight: FontWeight.w600,
             ),
           ),
         ],
-        onDone: () => completeOnboarding(context),
-        showSkipButton: true,
-        skip: const Text("Lewati", style: TextStyle(color: Colors.blue)),
-        next: const Icon(Icons.arrow_forward, color: Colors.blue),
-        done: const Text("Selesai",
-            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.blue)),
-        dotsDecorator: DotsDecorator(
-          size: Size.square(screenWidth * 0.025),
-          activeSize: Size(screenWidth * 0.05, screenWidth * 0.025),
-          activeColor: Colors.blue, // Warna kuning untuk dot aktif
-          color: Colors.grey, // Warna biru untuk dot tidak aktif
-          spacing: EdgeInsets.symmetric(horizontal: screenWidth * 0.01),
-          activeShape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(screenWidth * 0.05),
-          ),
-        ),
       ),
     );
   }
