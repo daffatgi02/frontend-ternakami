@@ -53,14 +53,6 @@ class _AllArticlesScreenState extends State<AllArticlesScreen> {
           searchText.value = text;
           _filterArticles(text);
         },
-        theme: AppBarWithSearchSwitchTheme(
-          backgroundColor: Colors.blue,
-          textStyle: const TextStyle(color: Colors.white),
-          inputDecorationTheme: const InputDecorationTheme(
-            hintStyle: TextStyle(color: Colors.white70),
-          ),
-          iconTheme: const IconThemeData(color: Colors.white),
-        ),
         appBarBuilder: (context) {
           return AppBar(
             title: Text(
@@ -86,7 +78,7 @@ class _AllArticlesScreenState extends State<AllArticlesScreen> {
               final article = filteredArticles[index];
               return Padding(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
                 child: Card(
                   color: Colors.white,
                   elevation: 2.0,
@@ -95,13 +87,13 @@ class _AllArticlesScreenState extends State<AllArticlesScreen> {
                   ),
                   child: ListTile(
                     contentPadding: const EdgeInsets.all(8.0),
-                    leading: ClipRRect(
-                      borderRadius: BorderRadius.circular(8.0),
-                      child: SizedBox(
-                        width: 100,
-                        height: 300,
-                        child: Image.network(
-                          article.imgUrl,
+                    leading: Container(
+                      width: 98, // Set width to make it square
+                      height: 98, // Set height to make it square
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8.0),
+                        image: DecorationImage(
+                          image: NetworkImage(article.imgUrl),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -161,9 +153,3 @@ class _AllArticlesScreenState extends State<AllArticlesScreen> {
     );
   }
 }
-
-AppBarWithSearchSwitchTheme(
-    {required MaterialColor backgroundColor,
-    required TextStyle textStyle,
-    required InputDecorationTheme inputDecorationTheme,
-    required IconThemeData iconTheme}) {}
