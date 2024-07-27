@@ -48,6 +48,94 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  void _showLogoutModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: FloatingActionButton(
+                  mini: true,
+                  backgroundColor: Colors.grey[300],
+                  onPressed: () => Navigator.of(context).pop(),
+                  child: const Icon(Icons.close, color: Colors.black),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Keluar Ternakami?',
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Apakah Anda yakin ingin keluar dari akun?',
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.grey,
+                      ),
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text(
+                        'Tidak',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _logout();
+                      },
+                      child: Text(
+                        'Iya',
+                        style: GoogleFonts.poppins(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   void _showFullImage(BuildContext context) {
     showDialog(
       context: context,
@@ -73,7 +161,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 top: 20,
                 right: 20,
                 child: IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white),
+                  icon: const Icon(Icons.close, color: Colors.blue),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -214,7 +302,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     );
                   }),
                   const SizedBox(height: 8),
-                  _menuLogout('Keluar', onTap: _logout),
+                  _menuLogout('Keluar', onTap: () => _showLogoutModal(context)),
                   const SizedBox(height: 20),
                   Text(
                     'Survey Aplikasi',
