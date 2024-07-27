@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:ternakami/screens/login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ternakami/screens/survey_screen.dart';
 import 'package:ternakami/screens/tentang_kami_screen.dart';
 import 'package:ternakami/screens/history_screen.dart';
 
@@ -57,7 +58,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       builder: (BuildContext context) {
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.05,
+            vertical: MediaQuery.of(context).size.height * 0.03,
+          ),
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
@@ -78,7 +82,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Text(
                 'Keluar Ternakami?',
                 style: GoogleFonts.poppins(
-                  fontSize: 20,
+                  fontSize: MediaQuery.of(context).size.width * 0.05,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -86,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Text(
                 'Apakah Anda yakin ingin keluar dari akun?',
                 style: GoogleFonts.poppins(
-                  fontSize: 16,
+                  fontSize: MediaQuery.of(context).size.width * 0.04,
                   fontWeight: FontWeight.bold,
                   color: Colors.grey,
                 ),
@@ -105,6 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         'Tidak',
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context).size.width * 0.04,
                         ),
                       ),
                     ),
@@ -123,6 +128,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         'Iya',
                         style: GoogleFonts.poppins(
                           fontWeight: FontWeight.bold,
+                          fontSize: MediaQuery.of(context).size.width * 0.04,
                         ),
                       ),
                     ),
@@ -283,7 +289,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  _buildMenuItem('Profil Saya'),
                   const SizedBox(height: 8),
                   _buildMenuItem('Riwayat Prediksi', onTap: () {
                     Navigator.push(
@@ -321,6 +326,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       trailing:
                           const Icon(Icons.arrow_right, color: Colors.blue),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SurveyScreen(
+                              fullname: widget.fullname,
+                              email: widget.email,
+                            ),
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
