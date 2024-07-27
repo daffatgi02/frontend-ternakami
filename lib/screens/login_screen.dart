@@ -128,7 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
             Container(
               height: MediaQuery.of(context).size.height * 0.4,
               decoration: const BoxDecoration(
-                color: Color(0xFF3572EF),
+                color: Colors.blue,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(50),
                   bottomRight: Radius.circular(50),
@@ -262,7 +262,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ElevatedButton(
                       onPressed: login,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF3572EF),
+                        backgroundColor: Colors.blue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
