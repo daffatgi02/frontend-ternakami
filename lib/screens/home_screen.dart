@@ -10,9 +10,9 @@ import 'package:ternakami/screens/article_detail_screen.dart';
 import 'package:ternakami/screens/prediction_screen.dart';
 import 'package:ternakami/screens/profile_screen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:ternakami/screens/all_articles_screen.dart'; // Import the new screen
+import 'package:ternakami/screens/all_articles_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter/cupertino.dart'; // Import Cupertino package
+import 'package:flutter/cupertino.dart';
 
 class HomeScreen extends StatefulWidget {
   final String token;
@@ -302,7 +302,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w500,
                   color: Colors.blue,
-                  fontSize: 12, // Menambahkan fontSize
+                  fontSize: 12,
                 ),
               ),
             ),

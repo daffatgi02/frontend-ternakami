@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter/cupertino.dart'; // Import Cupertino package
+import 'package:flutter/cupertino.dart';
 import 'package:ternakami/models/history.dart';
 import 'package:ternakami/services/api_service.dart';
 import 'package:ternakami/screens/history_detail_screen.dart';
@@ -137,7 +137,6 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                       Navigator.push(
                                         context,
                                         CupertinoPageRoute(
-                                          // Use CupertinoPageRoute
                                           builder: (context) =>
                                               HistoryDetailScreen(
                                                   history: history),
@@ -448,7 +447,7 @@ class _FilterSheetState extends State<FilterSheet> {
       decoration: const BoxDecoration(
         color: Colors.white,
         borderRadius:
-            BorderRadius.all(Radius.circular(24)), // Ensures no rounded corners
+            BorderRadius.all(Radius.circular(24)),
       ),
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -466,7 +465,7 @@ class _FilterSheetState extends State<FilterSheet> {
                 icon: const Icon(Icons.close),
                 onPressed: () {
                   if (_selectedFilter != 'All') {
-                    _handleFilterChange('All'); // Show all history on close
+                    _handleFilterChange('All');
                   }
                   Navigator.pop(context);
                 },

@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:dio/dio.dart';
-import 'package:mime/mime.dart'; // For lookupMimeType
-import 'package:http_parser/http_parser.dart'; // Add this line
+import 'package:mime/mime.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:ternakami/models/user.dart';
 import 'package:ternakami/models/history.dart';
 import 'package:ternakami/utils/constants.dart';
@@ -11,6 +11,7 @@ import 'package:logging/logging.dart';
 class ApiService {
   final Dio _dio = Dio();
   final Logger _logger = Logger('ApiService');
+  bool _isLogging = false;
 
   ApiService() {
     _setupLogging();
@@ -19,7 +20,13 @@ class ApiService {
   void _setupLogging() {
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((record) {
-      print('${record.level.name}: ${record.time}: ${record.message}');
+      if (!_isLogging) {
+        _isLogging = true;
+        print('${record.level.name}: ${record.time}: ${record.message}');
+        _isLogging = false;
+      } else {
+        print('Skipping concurrent log: ${record.message}');
+      }
     });
   }
 
@@ -149,7 +156,6 @@ class ApiService {
     }
   }
 
-  // Tambahkan method berikut ke dalam ApiService class
   Future<bool> validateToken(String token) async {
     try {
       final response = await _dio.get(
@@ -162,7 +168,8 @@ class ApiService {
       );
       return response.statusCode == 200;
     } on DioException catch (e) {
-      print('Token validation error: ${e.response?.statusCode} ${e.message}');
+      _logger.warning(
+          'Token validation error: ${e.response?.statusCode} ${e.message}');
       return false;
     }
   }

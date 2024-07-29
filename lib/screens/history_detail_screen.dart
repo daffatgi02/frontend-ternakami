@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:easy_image_viewer/easy_image_viewer.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:intl/intl.dart'; // Tambahkan paket intl untuk memformat tanggal
+import 'package:intl/intl.dart';
 import 'package:ternakami/models/history.dart';
 
 class HistoryDetailScreen extends StatelessWidget {
@@ -84,9 +85,7 @@ class HistoryDetailScreen extends StatelessWidget {
                                 color: Colors.white,
                               ),
                             ),
-                            SizedBox(
-                                height:
-                                    8), // Memberi jarak vertikal antara teks
+                            SizedBox(height: 8),
                             Text(
                               'Hasil prediksi pada kambingmu!',
                               style: TextStyle(
@@ -118,11 +117,13 @@ class HistoryDetailScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                   GestureDetector(
                     onTap: () {
-                      showImageViewer(
+                      Navigator.push(
                         context,
-                        Image.network(history.imageUrl).image,
-                        swipeDismissible: true,
-                        doubleTapZoomable: true,
+                        MaterialPageRoute(
+                          builder: (context) => FullScreenImageViewer(
+                            imageUrls: [history.imageUrl],
+                          ),
+                        ),
                       );
                     },
                     child: ClipRRect(
@@ -262,6 +263,47 @@ class HistoryDetailScreen extends StatelessWidget {
                   const SizedBox(height: 16),
                 ],
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class FullScreenImageViewer extends StatelessWidget {
+  final List<String> imageUrls;
+  final int initialIndex;
+
+  const FullScreenImageViewer(
+      {super.key, required this.imageUrls, this.initialIndex = 0});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          PhotoViewGallery.builder(
+            itemCount: imageUrls.length,
+            builder: (context, index) {
+              return PhotoViewGalleryPageOptions(
+                imageProvider: NetworkImage(imageUrls[index]),
+                minScale: PhotoViewComputedScale.contained,
+                maxScale: PhotoViewComputedScale.covered * 2,
+                heroAttributes: PhotoViewHeroAttributes(tag: imageUrls[index]),
+              );
+            },
+            scrollPhysics: const BouncingScrollPhysics(),
+            backgroundDecoration: const BoxDecoration(color: Colors.black),
+            pageController: PageController(initialPage: initialIndex),
+          ),
+          Positioned(
+            top: 40,
+            left: 20,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white),
+              onPressed: () => Navigator.of(context).pop(),
             ),
           ),
         ],

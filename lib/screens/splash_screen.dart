@@ -2,18 +2,20 @@
 
 import 'package:flutter/material.dart';
 import 'package:another_flutter_splash_screen/another_flutter_splash_screen.dart';
+import 'package:logging/logging.dart';
 import 'package:ternakami/screens/onboarding_screen.dart';
 import 'package:ternakami/screens/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/cupertino.dart'; // Import Cupertino package
+import 'package:flutter/cupertino.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
   Future<bool> hasSeenOnboarding() async {
+    final logger = Logger('profile');
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool seenOnboarding = prefs.getBool('seenOnboarding') ?? false;
-    print('Has seen onboarding (SplashScreen): $seenOnboarding');
+    logger.info('Has seen onboarding (SplashScreen): $seenOnboarding');
     return seenOnboarding;
   }
 

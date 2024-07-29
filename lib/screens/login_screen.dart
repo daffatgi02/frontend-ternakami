@@ -6,7 +6,8 @@ import 'package:ternakami/screens/register_screen.dart';
 import 'package:ternakami/services/api_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'home_screen.dart';
-import 'package:flutter/cupertino.dart'; // Import Cupertino package
+import 'package:logging/logging.dart';
+import 'package:flutter/cupertino.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,7 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
 
   final _formKey = GlobalKey<FormState>();
-
+  final _logger = Logger('LoginScreen');
   String? emailError;
   String? passwordError;
 
@@ -46,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
           await prefs.setString('fullname', result.fullname);
           await prefs.setInt('userid', result.userid);
           await prefs.setString('email', result.email);
-          print('Token berhasil disimpan: ${result.token}');
+          _logger.info('Token berhasil disimpan: ${result.token}');
         }
 
         Navigator.pushReplacement(
@@ -76,11 +77,10 @@ class _LoginScreenState extends State<LoginScreen> {
     String? email = prefs.getString('email');
 
     if (token != null && fullname != null && userid != null && email != null) {
-      print('Token ditemukan di penyimpanan: $token');
-      // Anda bisa menambahkan validasi token di sini
+      _logger.info('Token ditemukan di penyimpanan: $token');
       final isValid = await apiService.validateToken(token);
       if (isValid) {
-        print('Token valid');
+        _logger.info('Token valid');
         Navigator.pushReplacement(
           context,
           CupertinoPageRoute(
@@ -93,8 +93,8 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
       } else {
-        print('Token tidak valid');
-        prefs.clear(); // Hapus token yang tidak valid
+        _logger.warning('Token tidak valid');
+        prefs.clear();
       }
     }
   }
@@ -129,8 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
               height: MediaQuery.of(context).size.height * 0.3,
               decoration: const BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(
-                      "assets/gambar/bg.png"), // Ganti dengan path gambar Anda
+                  image: AssetImage("assets/gambar/bg.png"),
                   fit: BoxFit.cover,
                 ),
                 borderRadius: BorderRadius.only(

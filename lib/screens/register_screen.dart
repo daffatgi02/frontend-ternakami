@@ -67,7 +67,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage(
-                      "assets/gambar/bg.png"), // Ganti dengan path gambar Anda
+                      "assets/gambar/bg.png"),
                   fit: BoxFit.cover,
                 ),
                 borderRadius: BorderRadius.only(

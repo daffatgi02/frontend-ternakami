@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ternakami/screens/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/cupertino.dart'; // Import Cupertino package
+import 'package:flutter/cupertino.dart';
 
 void main() => runApp(const OnboardingApp());
 

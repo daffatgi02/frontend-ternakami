@@ -2,6 +2,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:logging/logging.dart';
 import 'package:ternakami/screens/login_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,7 +35,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await prefs.remove('email');
     await prefs.remove('userid');
 
-    print('Token berhasil dihapus.');
+    _logger.info('Token berhasil dihapus.');
 
     Navigator.pushReplacement(
       context,
@@ -348,3 +349,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
+
+final _logger = Logger('profile');
