@@ -46,11 +46,11 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets\gambar\login.png
-    - assets\gambar\regis.png
-    - assets\gambar\onboarding2.png
-    - assets\gambar\onboarding1.png
-    - assets\gambar\onboarding3.png
-    - assets\gambar\logo.png
-    - assets\gambar\profil.png
-    - assets\gambar\bg.png
+    - assets/gambar/login.png
+    - assets/gambar/regis.png
+    - assets/gambar/onboarding2.png
+    - assets/gambar/onboarding1.png
+    - assets/gambar/onboarding3.png
+    - assets/gambar/logo.png
+    - assets/gambar/profil.png
+    - assets/gambar/bg.png
